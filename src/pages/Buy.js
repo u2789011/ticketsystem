@@ -82,7 +82,7 @@ function Buy({ connectedContract }) {
     <>
       <Heading mb={4}>活動名稱</Heading>
       <Text fontSize="xl" mb={4}>
-        請連結錢包鑄造NFT票券最為入場證明！
+        請連結錢包鑄造NFT票券做為入場證明！
       </Text>
       <Flex
         flexDirection="column"

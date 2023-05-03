@@ -91,12 +91,12 @@ function CheckIn({ connectedContract }) {
         <>
           {!scannedAddress && (
             <Text fontSize="xl" mb={8}>
-              Scan wallet address to verify ticket ownership and check-in.
+              掃描錢包地址確認是否有票券並完成入場
             </Text>
           )}
           {scannedAddress && !hasTicket && (
             <Text fontSize="xl" mb={8}>
-              This wallet does not own a NFTix. Please try again.
+              這個錢包沒有持有此活動票券!
             </Text>
           )}
           {!hasTicket && (

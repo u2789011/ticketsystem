@@ -80,9 +80,9 @@ function Admin({ isOwner, connectedContract }) {
   };
   return (
     <>
-      <Heading mb={4}>Admin panel</Heading>
+      <Heading mb={4}>管理員操作</Heading>
       <Text fontSize="xl" mb={8}>
-        Enable and disable sales on the smart contract.
+        操作智能合約開啟或關閉販售
       </Text>
       <Flex width="100%" justifyContent="center">
         <Button
@@ -92,7 +92,7 @@ function Admin({ isOwner, connectedContract }) {
           size="lg"
           colorScheme="teal"
         >
-          Open Sale
+          開始販售
         </Button>
         <Button
           onClick={closeSale}
@@ -103,7 +103,7 @@ function Admin({ isOwner, connectedContract }) {
           variant="solid"
           marginLeft="24px"
         >
-          Close Sale
+          關閉販售
         </Button>
       </Flex>
     </>

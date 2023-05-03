@@ -27,7 +27,7 @@ function Admin({ isOwner, connectedContract }) {
             target="_blank"
             rel="nofollow noreferrer"
           >
-            Checkout the transaction on Etherscan
+            在區塊鏈瀏覽器確認交易！
           </a>
         ),
       });
@@ -63,7 +63,7 @@ function Admin({ isOwner, connectedContract }) {
             target="_blank"
             rel="nofollow noreferrer"
           >
-            Checkout the transaction on Etherscan
+            在區塊鏈瀏覽器確認交易！
           </a>
         ),
       });

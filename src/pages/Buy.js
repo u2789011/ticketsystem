@@ -42,7 +42,7 @@ function Buy({ connectedContract }) {
             target="_blank"
             rel="nofollow noreferrer"
           >
-            Checkout the transaction on Etherscan
+            在區塊鏈瀏覽器確認交易！
           </a>
         ),
         status: "success",
@@ -80,9 +80,9 @@ function Buy({ connectedContract }) {
 
   return (
     <>
-      <Heading mb={4}>DevDAO Conference 2022</Heading>
+      <Heading mb={4}>活動名稱</Heading>
       <Text fontSize="xl" mb={4}>
-        Connect your wallet to mint your NFT. It'll be your ticket to get in!
+        請連結錢包鑄造NFT票券最為入場證明！
       </Text>
       <Flex
         flexDirection="column"
@@ -99,12 +99,14 @@ function Buy({ connectedContract }) {
             size="lg"
             colorScheme="teal"
           >
-            Buy Ticket
+            購買票券
           </Button>
         </ButtonGroup>
         {availableTicketCount && totalTicketCount && (
           <Text>
-            {availableTicketCount} of {totalTicketCount} minted!
+            總共 {totalTicketCount} 張票
+            <br />
+            目前還剩 {availableTicketCount} 張！
           </Text>
         )}
       </Flex>

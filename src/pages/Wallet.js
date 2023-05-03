@@ -17,10 +17,9 @@ function Wallet({ address }) {
   const createTicketDisplay = () => {
     const ticket = {
       token_id: 1,
-      permalink:
-        "https://goerli.rarible.com/token/0x8f510afccb7a50181dfe95b803443070ded8ba1d:1?tab=history",
+      permalink: "https://testnets.opensea.io/zh-TW",
       image_url:
-        "https://rarible.mypinata.cloud/ipfs/Qmd8FCbr5eiFcrSzj3PRovG61tVeus3HJzT3B46XXaJmWj",
+        "https://gateway.pinata.cloud/ipfs/QmTjhXx8LNw6D14weJsQ2nQjUJFAmnFz6vs9ZPkuEqZDo9/1.png",
     };
     return (
       <Link
@@ -31,7 +30,7 @@ function Wallet({ address }) {
         margin="16px 8px"
       >
         <Text fontSize="xl" textAlign="center" mb={2}>
-          NFTix #{ticket.token_id}
+          票券編號 #{ticket.token_id}
         </Text>
         <Box padding="12px" border="1px solid black" borderRadius="12px">
           <Image src={ticket.image_url} alt={`NFTix #${ticket.token_id}`} />
@@ -65,7 +64,7 @@ function Wallet({ address }) {
   }, [address]);
   return (
     <>
-      <Heading mb={2}>Your ticket</Heading>
+      <Heading mb={2}>我的票券</Heading>
       <Flex justifyContent="center" margin="0 auto 16px" width="66%">
         {loadingTicket && (
           <CircularProgress
@@ -78,7 +77,7 @@ function Wallet({ address }) {
         {!loadingTicket && createTicketDisplay()}
         {!loadingTicket && !ticket && (
           <Text fontSize="xl" mb={2} width="100%">
-            You don't own any tickets 😢
+            尚未擁有任何票券 😢
           </Text>
         )}
       </Flex>

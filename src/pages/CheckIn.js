@@ -29,7 +29,7 @@ function CheckIn({ connectedContract }) {
             target="_blank"
             rel="nofollow noreferrer"
           >
-            Checkout the transaction on Etherscan
+            在區塊鏈瀏覽器確認交易！
           </a>
         ),
         status: "success",
@@ -73,7 +73,7 @@ function CheckIn({ connectedContract }) {
       {!showScanner && scannedAddress && hasTicket && (
         <>
           <Text fontSize="xl" mb={8}>
-            This wallet owns a NFTix!
+            此錢包擁有票券可入場!
           </Text>
           <Flex width="100%" justifyContent="center">
             <Button
@@ -106,7 +106,7 @@ function CheckIn({ connectedContract }) {
                 size="lg"
                 colorScheme="teal"
               >
-                Scan QR
+                掃描 QR Code
               </Button>
             </Flex>
           )}

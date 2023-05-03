@@ -1,25 +1,16 @@
-import {
-  Button,
-  Box,
-  Flex,
-} from "@chakra-ui/react";
+import { Button, Box, Flex } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 
-function Connect({
-  address,
-  onConnect,
-  onDisconnect,
-}) {
+function Connect({ address, onConnect, onDisconnect }) {
   const navigate = useNavigate();
   const connectWallet = async () => {
     const { ethereum } = window;
     if (!ethereum) return;
 
     try {
-      const accounts =
-        await ethereum.request({
-          method: "eth_requestAccounts",
-        });
+      const accounts = await ethereum.request({
+        method: "eth_requestAccounts",
+      });
       onConnect(accounts[0]);
     } catch (err) {
       console.log(err);
@@ -54,7 +45,7 @@ function Connect({
             variant="link"
             color="purple"
           >
-            Disconnect
+            取消連結
           </Button>
         </Box>
       )}
@@ -72,7 +63,7 @@ function Connect({
             variant="link"
             color="purple"
           >
-            Connect
+            連結錢包
           </Button>
         )}
         {address && (

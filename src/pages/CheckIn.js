@@ -1,10 +1,11 @@
 import { Box, Button, Flex, Heading, Text, useToast } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import QrReader from "react-qr-scanner";
+import { QrReader } from "react-qr-reader";
 
 function CheckIn({ connectedContract }) {
   const toast = useToast();
   const [showScanner, setShowScanner] = useState(false);
+  const [data, setData] = useState("No result");
   const [scannedAddress, setScannedAddress] = useState(null);
 
   const [hasTicket, setHasTicket] = useState(false);
@@ -116,36 +117,34 @@ function CheckIn({ connectedContract }) {
         <>
           <Box margin="16px auto 8px auto" padding="0 16px" width="360px">
             <QrReader
-              delay={3000}
-              facingMode={"environment"}
-              style={{
-                maxWidth: "100%",
-                margin: "0 auto",
-              }}
-              onError={(error) => {
-                console.log(error);
-                toast({
-                  title: "Failure",
-                  description: error,
-                  status: "error",
-                  variant: "subtle",
-                });
-                setShowScanner(false);
-              }}
-              onScan={(data) => {
-                if (!data) return;
-                console.log(data);
-                const address = data.text.split("ethereum:");
-                setScannedAddress(address[1]);
-                setShowScanner(false);
-                toast({
-                  title: "Captured address!",
-                  description: `${address[1].slice(0, 6)}
+              onResult={(result, error) => {
+                if (!!result) {
+                  setData(result?.text);
+                  console.log(data);
+                  const address = data.text.split("ethereum:");
+                  setScannedAddress(address[1]);
+                  setShowScanner(false);
+                  toast({
+                    title: "Captured address!",
+                    description: `${address[1].slice(0, 6)}
                     ...${address[1].slice(-4)}`,
-                  status: "success",
-                  variant: "subtle",
-                });
+                    status: "success",
+                    variant: "subtle",
+                  });
+                }
+
+                if (!!error) {
+                  console.info(error);
+                  toast({
+                    title: "Failure",
+                    description: error,
+                    status: "error",
+                    variant: "subtle",
+                  });
+                  setShowScanner(false);
+                }
               }}
+              style={{ width: "100%" }}
             />
           </Box>
           <Flex width="100%" justifyContent="center">

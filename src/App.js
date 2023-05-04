@@ -76,7 +76,7 @@ function App() {
     if (!ethereum) return;
 
     const provider = new ethers.providers.Web3Provider(ethereum);
-    const signer = provider.getSigner();
+    const signer = provider.getSigner(address);
     const connectedContract = new ethers.Contract(
       process.env.REACT_APP_CONTRACT_ID,
       nfTixBooth.abi,

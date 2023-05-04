@@ -80,7 +80,7 @@ function Buy({ connectedContract }) {
 
   return (
     <>
-      <Heading mb={4}>活動名稱</Heading>
+      <Heading mb={4}>金鴿之夜</Heading>
       <Text fontSize="xl" mb={4}>
         請連結錢包鑄造NFT票券做為入場證明！
       </Text>

@@ -117,6 +117,7 @@ function CheckIn({ connectedContract }) {
           <Box margin="16px auto 8px auto" padding="0 16px" width="360px">
             <QrReader
               delay={3000}
+              facingMode="rear"
               style={{
                 maxWidth: "100%",
                 margin: "0 auto",

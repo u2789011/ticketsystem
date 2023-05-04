@@ -74,7 +74,7 @@ function Wallet({ address }) {
             size="120px"
           />
         )}
-        {!loadingTicket && createTicketDisplay()}
+        {!loadingTicket && ticket && createTicketDisplay()}
         {!loadingTicket && !ticket && (
           <Text fontSize="xl" mb={2} width="100%">
             尚未擁有任何票券 😢

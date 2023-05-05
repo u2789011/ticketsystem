@@ -14,13 +14,7 @@ function Wallet({ address }) {
   const [loadingTicket, setLoadingTicket] = useState(false);
   const [ticket, setTicket] = useState(null);
 
-  const createTicketDisplay = () => {
-    const ticket = {
-      token_id: 1,
-      permalink: "https://testnets.opensea.io/zh-TW",
-      image_url:
-        "https://gateway.pinata.cloud/ipfs/QmTjhXx8LNw6D14weJsQ2nQjUJFAmnFz6vs9ZPkuEqZDo9/1.png",
-    };
+  const createTicketDisplay = (ticket) => {
     return (
       <Link
         href={ticket.permalink}
@@ -53,7 +47,7 @@ function Wallet({ address }) {
           res?.data?.assets &&
           res?.data?.assets.length
         ) {
-          setTicket(res.data.assets[0]);
+          setTicket(res.data.assets);
         }
         setLoadingTicket(false);
       })
@@ -74,7 +68,7 @@ function Wallet({ address }) {
             size="120px"
           />
         )}
-        {!loadingTicket && ticket && createTicketDisplay()}
+        {!loadingTicket && ticket && ticket.map(createTicketDisplay)}
         {!loadingTicket && !ticket && (
           <Text fontSize="xl" mb={2} width="100%">
             尚未擁有任何票券 😢

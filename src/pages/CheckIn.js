@@ -1,11 +1,11 @@
 import { Box, Button, Flex, Heading, Text, useToast } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { QrReader } from "react-qr-reader";
+import QrReader from "react-qr-scanner";
 
 function CheckIn({ connectedContract }) {
   const toast = useToast();
   const [showScanner, setShowScanner] = useState(false);
-  const [data, setData] = useState("No result");
+  // const [data, setData] = useState("No result");
   const [scannedAddress, setScannedAddress] = useState(null);
 
   const [hasTicket, setHasTicket] = useState(false);
@@ -115,40 +115,47 @@ function CheckIn({ connectedContract }) {
       )}
       {showScanner && (
         <>
-          <Box margin="16px auto 8px auto" padding="0 16px" width="360px">
+          <Box padding="0" margin="0" width="100%">
             <QrReader
-              facingMode={"environment"}
-              onResult={(result, error) => {
-                if (!!result) {
-                  setData(result?.text);
-                  console.log(data);
-                  const address = data.text.split("ethereum:");
-                  setScannedAddress(address[1]);
-                  setShowScanner(false);
-                  toast({
-                    title: "Captured address!",
-                    description: `${address[1].slice(0, 6)}
-                    ...${address[1].slice(-4)}`,
-                    status: "success",
-                    variant: "subtle",
-                  });
-                }
-
-                if (!!error) {
-                  console.info(error);
-                  toast({
-                    title: "Failure",
-                    description: error,
-                    status: "error",
-                    variant: "subtle",
-                  });
-                  setShowScanner(false);
-                }
+              delay={3000}
+              facingmode="environment"
+              style={{
+                width: "100%",
+                margin: "0",
               }}
-              style={{ width: "100%" }}
+              onError={(error) => {
+                console.log(error);
+                toast({
+                  title: "Failure",
+                  description: error,
+                  status: "error",
+                  variant: "subtle",
+                });
+                setShowScanner(false);
+              }}
+              onScan={(data) => {
+                if (!data) return;
+                console.log(data);
+                // const address = data.text.split("ethereum:");
+                const address = data.text.substr(9, 42);
+                console.log(address);
+                setScannedAddress(address);
+                setShowScanner(false);
+                toast({
+                  title: "Captured address!",
+                  description: `${address.slice(0, 6)}
+                    ...${address.slice(-4)}`,
+                  status: "success",
+                  variant: "subtle",
+                });
+              }}
             />
           </Box>
-          <Flex width="100%" justifyContent="center">
+          <Flex
+            width="100%"
+            justifyContent="center"
+            margin="16px auto 8px auto"
+          >
             <Button
               onClick={() => setShowScanner(false)}
               size="lg"

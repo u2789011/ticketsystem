@@ -29,7 +29,7 @@ function Buy({ connectedContract }) {
 
       setBuyTxnPending(true);
       const buyTxn = await connectedContract.mint({
-        value: `${0.08 * 10 ** 18}`,
+        value: `${0.01 * 10 ** 18}`,
       });
 
       await buyTxn.wait();

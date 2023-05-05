@@ -118,7 +118,7 @@ function CheckIn({ connectedContract }) {
           <Box padding="0" margin="0" width="100%">
             <QrReader
               delay={3000}
-              facingmode="environment"
+              videoConstraints={{ facingMode: "environment" }}
               style={{
                 width: "100%",
                 margin: "0",

@@ -46,16 +46,18 @@ function App() {
   const [connectedContract, setConnectedContract] = useState(null);
   console.log("connectedContract", connectedContract);
 
+  const [errorMessage, setErrorMessage] = useState(null);
+  console.log("errorMessage", errorMessage);
+
   useEffect(() => {
     const checkIsContractOwner = async () => {
       if (!address || !connectedContract) return;
 
-      const ownerAddress = await connectedContract.owner();
-
-      if (address.toLowerCase() === ownerAddress.toLowerCase()) {
-        setIsOwner(true);
-      } else {
-        setIsOwner(false);
+      try {
+        const ownerAddress = await connectedContract.owner();
+        setIsOwner(address.toLowerCase() === ownerAddress.toLowerCase());
+      } catch (err) {
+        setErrorMessage(err.message);
       }
     };
     checkIsContractOwner();
@@ -75,14 +77,18 @@ function App() {
     const { ethereum } = window;
     if (!ethereum) return;
 
-    const provider = new ethers.providers.Web3Provider(ethereum);
-    const signer = provider.getSigner(address);
-    const connectedContract = new ethers.Contract(
-      process.env.REACT_APP_CONTRACT_ID,
-      nfTixBooth.abi,
-      signer
-    );
-    setConnectedContract(connectedContract);
+    try {
+      const provider = new ethers.providers.Web3Provider(ethereum);
+      const signer = provider.getSigner(address);
+      const connectedContract = new ethers.Contract(
+        process.env.REACT_APP_CONTRACT_ID,
+        nfTixBooth.abi,
+        signer
+      );
+      setConnectedContract(connectedContract);
+    } catch (err) {
+      setErrorMessage(err.message);
+    }
   };
 
   useEffect(() => {
@@ -223,6 +229,11 @@ function App() {
           </Routes>
         </Flex>
       </Page>
+      {errorMessage && (
+        <Flex mt={4} color="red.500" fontWeight="bold">
+          <p>{errorMessage.message}</p>
+        </Flex>
+      )}
     </>
   );
 }

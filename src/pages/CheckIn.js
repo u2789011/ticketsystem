@@ -23,7 +23,7 @@ function CheckIn({ connectedContract }) {
       setCheckInTxnPending(false);
 
       toast({
-        title: "Success!",
+        title: "成功!",
         description: (
           <a
             href={`https://goerli.etherscan.io/tx/${checkInTxn.hash}`}
@@ -40,8 +40,8 @@ function CheckIn({ connectedContract }) {
       console.log(err);
       setCheckInTxnPending(false);
       toast({
-        title: "Failed.",
-        description: err,
+        title: "錯誤",
+        description: "CheckIn入場錯誤,請向工作人員尋求人工協助",
         status: "error",
         variant: "subtle",
       });
@@ -126,8 +126,8 @@ function CheckIn({ connectedContract }) {
               onError={(error) => {
                 console.log(error);
                 toast({
-                  title: "Failure",
-                  description: error,
+                  title: "錯誤",
+                  description: "無法讀取 QR Code",
                   status: "error",
                   variant: "subtle",
                 });
@@ -142,7 +142,7 @@ function CheckIn({ connectedContract }) {
                 setScannedAddress(address);
                 setShowScanner(false);
                 toast({
-                  title: "Captured address!",
+                  title: "掃描成功!",
                   description: `${address.slice(0, 6)}
                     ...${address.slice(-4)}`,
                   status: "success",

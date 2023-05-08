@@ -35,7 +35,7 @@ function Buy({ connectedContract }) {
       await buyTxn.wait();
       setBuyTxnPending(false);
       toast({
-        title: "Success!",
+        title: "成功!",
         description: (
           <a
             href={`https://goerli.etherscan.io/tx/${buyTxn.hash}`}
@@ -51,12 +51,29 @@ function Buy({ connectedContract }) {
     } catch (err) {
       console.log(err);
       setBuyTxnPending(false);
-      toast({
-        title: "Failed.",
-        description: err,
-        status: "error",
-        variant: "subtle",
-      });
+
+      if (err.code === 4001) {
+        toast({
+          title: "使用者拒絕簽署交易",
+          description: "請同意簽署本次購買票券之交易",
+          status: "warning",
+          variant: "subtle",
+        });
+      } else if (err.code === 2000) {
+        toast({
+          title: "餘額不足",
+          description: "請加值您的錢包餘額",
+          status: "warning",
+          variant: "subtle",
+        });
+      } else {
+        toast({
+          title: "錯誤",
+          description: "交易錯誤, 請通知系統管理員",
+          status: "error",
+          variant: "subtle",
+        });
+      }
     }
   };
 

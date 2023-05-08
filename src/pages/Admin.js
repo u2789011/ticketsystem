@@ -36,7 +36,7 @@ function Admin({ isOwner, connectedContract }) {
       setCloseSaleTxnPending(true);
       toast({
         title: "Failure",
-        description: error,
+        description: error.toString(),
         status: "error",
         variant: "subtle",
       });
@@ -72,7 +72,7 @@ function Admin({ isOwner, connectedContract }) {
       setOpenSaleTxnPending(false);
       toast({
         title: "Failure",
-        description: error,
+        description: error.toString(),
         status: "error",
         variant: "subtle",
       });

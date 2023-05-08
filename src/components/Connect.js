@@ -1,8 +1,10 @@
-import { Button, Box, Flex } from "@chakra-ui/react";
+import { Button, Box, Flex, useToast } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 function Connect({ address, onConnect, onDisconnect }) {
   const navigate = useNavigate();
+  const toast = useToast();
 
   const isGoerliChain = async () => {
     const { ethereum } = window;
@@ -53,6 +55,32 @@ function Connect({ address, onConnect, onDisconnect }) {
     onDisconnect();
     navigate("/");
   };
+
+  useEffect(() => {
+    const handleChainChanged = async () => {
+      const isGoerli = await isGoerliChain();
+      if (!isGoerli) {
+        toast({
+          title: "請切換至 Goerli 測試網路",
+          description: "將自動為您切換至 Goerli, 請至小狐狸錢包進行切換",
+          status: "warning",
+          variant: "subtle"
+        });
+        await switchToGoerliChain();
+      }
+    };
+
+    const { ethereum } = window;
+    if (ethereum) {
+      ethereum.on("chainChanged", handleChainChanged);
+    }
+
+    return () => {
+      if (ethereum) {
+        ethereum.off("chainChanged", handleChainChanged);
+      }
+    };
+  }, [toast]);
 
   return (
     <Flex

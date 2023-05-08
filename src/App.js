@@ -73,6 +73,19 @@ function App() {
     }
   }, [address]);
 
+  useEffect(() => {
+    const { ethereum } = window;
+    const handleNetworkChange = () => {
+      getConnectedContract();
+    };
+  
+    ethereum.on("networkChanged", handleNetworkChange);
+  
+    return () => {
+      ethereum.removeListener("networkChanged", handleNetworkChange);
+    };
+  }, [address, connectedContract]);
+
   const getConnectedContract = async () => {
     const { ethereum } = window;
     if (!ethereum) return;

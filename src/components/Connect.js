@@ -3,7 +3,39 @@ import { useNavigate } from "react-router-dom";
 
 function Connect({ address, onConnect, onDisconnect }) {
   const navigate = useNavigate();
+
+  const isGoerliChain = async () => {
+    const { ethereum } = window;
+    if (!ethereum) return false;
+
+    try {
+      const chainId = await ethereum.request({
+        method: "eth_chainId",
+      });
+      return chainId === "0x5";
+    } catch (err) {
+      console.log(err);
+      return false;
+    }
+  };
+
+  const switchToGoerliChain = async () => {
+    await window.ethereum.request({
+      method: "wallet_switchEthereumChain",
+      params: [
+        {
+          chainId: "0x5",
+        },
+      ],
+    });
+  };
+
   const connectWallet = async () => {
+    const isGoerli = await isGoerliChain();
+    if (!isGoerli) {
+      await switchToGoerliChain();
+    }
+
     const { ethereum } = window;
     if (!ethereum) return;
 

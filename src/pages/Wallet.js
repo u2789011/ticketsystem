@@ -59,7 +59,12 @@ function Wallet({ address }) {
   return (
     <>
       <Heading mb={2}>我的票券</Heading>
-      <Flex justifyContent="center" margin="0 auto 16px" width="66%">
+      <Flex
+        justifyContent="center"
+        margin="0 auto 16px"
+        width="66%"
+        direction={{ base: "column", md: "row" }}
+      >
         {loadingTicket && (
           <CircularProgress
             capIsRound

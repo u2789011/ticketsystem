@@ -78,9 +78,9 @@ function App() {
     const handleNetworkChange = () => {
       getConnectedContract();
     };
-  
+
     ethereum.on("networkChanged", handleNetworkChange);
-  
+
     return () => {
       ethereum.removeListener("networkChanged", handleNetworkChange);
     };

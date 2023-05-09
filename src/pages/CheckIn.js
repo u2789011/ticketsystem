@@ -81,7 +81,7 @@ function CheckIn({ connectedContract }) {
               onClick={checkIn}
               isLoading={checkInTxnPending}
               size="lg"
-              colorScheme="teal"
+              colorScheme="purple"
             >
               Check In
             </Button>
@@ -105,7 +105,7 @@ function CheckIn({ connectedContract }) {
               <Button
                 onClick={() => setShowScanner(true)}
                 size="lg"
-                colorScheme="teal"
+                colorScheme="purple"
               >
                 掃描 QR Code
               </Button>

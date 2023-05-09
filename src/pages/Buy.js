@@ -114,7 +114,7 @@ function Buy({ connectedContract }) {
             isLoading={buyTxnPending}
             loadingText="Pending"
             size="lg"
-            colorScheme="teal"
+            colorScheme="purple"
           >
             購買票券
           </Button>

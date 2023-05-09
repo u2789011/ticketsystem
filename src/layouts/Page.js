@@ -19,6 +19,7 @@ function Page({ children }) {
       justify="center"
       position="relative"
       padding="0 12px"
+      paddingTop={{ base: "50px", md: "48px" }}
     >
       <Container
         maxW="container.sm"

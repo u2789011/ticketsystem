@@ -15,44 +15,57 @@ function Wallet({ address }) {
   const [ticket, setTicket] = useState(null);
 
   const createTicketDisplay = (ticket) => {
+    const pinataURI = "https://gateway.pinata.cloud/ipfs/";
+    if (ticket.contract.address != process.env.REACT_APP_CONTRACT_ID) return;
     return (
       <Link
         href={ticket.permalink}
-        key={ticket.token_id}
+        key={ticket.id.tokenId}
         isExternal
         width="100%"
         margin="16px 8px"
       >
         <Text fontSize="xl" textAlign="center" mb={2}>
-          票券編號 #{ticket.token_id}
+          票券名稱：{ticket.metadata.name}
         </Text>
         <Box padding="12px" border="1px solid black" borderRadius="12px">
-          <Image src={ticket.image_url} alt={`NFTix #${ticket.token_id}`} />
+          <Image
+            src={pinataURI + ticket.metadata.image.replace("ipfs://", "")}
+            alt={`NFTix #${ticket.id.tokenId}`}
+          />
         </Box>
       </Link>
     );
   };
 
+  // Alchemy URL
+  const baseURL = `https://eth-Goerli.g.alchemy.com/nft/v2/${process.env.REACT_APP_ALCHEMY_API_KEY}/getNFTs`;
+  const url = `${baseURL}?contractAddress=${process.env.REACT_APP_CONTRACT_ID}&owner=${address}`;
+
+  const config = {
+    method: "get",
+    url: url,
+  };
+
   useEffect(() => {
     if (!address) return;
-    axios
-      .get(
-        `https://testnets-api.opensea.io/api/v1/assets?owner=${address}&asset_contract_address=${process.env.REACT_APP_CONTRACT_ID}`
-      )
+    axios(config)
+      // .get(
+      //   // `https://testnets-api.opensea.io/api/v1/assets?owner=${address}&asset_contract_address=${process.env.REACT_APP_CONTRACT_ID}`
+      // )
       .then((res) => {
         setLoadingTicket(true);
-        console.log(res);
+
         if (
           res.status === 200 &&
-          res?.data?.assets &&
-          res?.data?.assets.length
+          res?.data?.ownedNfts &&
+          res?.data?.ownedNfts.length
         ) {
-          setTicket(res.data.assets);
+          setTicket(res.data.ownedNfts);
         }
         setLoadingTicket(false);
       })
       .catch((err) => {
-        console.log(err);
         setLoadingTicket(false);
       });
   }, [address]);

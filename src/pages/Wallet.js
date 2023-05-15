@@ -59,6 +59,12 @@ function Wallet({ address }) {
   return (
     <>
       <Heading mb={2}>我的票券</Heading>
+      {!loadingTicket && ticket && ticket.length >= 1 && (
+        <Text fontSize="xl" mb={2} width="100%">
+          共持有 {ticket.length}{" "}
+          張票券，每個錢包帳號僅可使用一張票券入場，請將多餘票券轉給其他欲入場的錢包帳號！
+        </Text>
+      )}
       <Flex
         justifyContent="center"
         margin="0 auto 16px"
@@ -73,6 +79,7 @@ function Wallet({ address }) {
             size="120px"
           />
         )}
+
         {!loadingTicket && ticket && ticket.map(createTicketDisplay)}
         {!loadingTicket && !ticket && (
           <Text fontSize="xl" mb={2} width="100%">

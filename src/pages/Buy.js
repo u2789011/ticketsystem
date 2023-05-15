@@ -38,7 +38,7 @@ function Buy({ connectedContract }) {
         title: "成功!",
         description: (
           <a
-            href={`https://goerli.etherscan.io/tx/${buyTxn.hash}`}
+            href={`https://mumbai.polygonscan.com/tx/${buyTxn.hash}`}
             target="_blank"
             rel="nofollow noreferrer"
           >
@@ -79,7 +79,7 @@ function Buy({ connectedContract }) {
 
   const getAvailableTicketCount = async () => {
     try {
-      const count = await connectedContract.availableTicketCount();
+      const count = await connectedContract.availableTickets();
       setAvailableTicketCount(count.toNumber());
     } catch (err) {
       console.log(err);
@@ -88,7 +88,7 @@ function Buy({ connectedContract }) {
 
   const getTotalTicketCount = async () => {
     try {
-      const count = await connectedContract.totalTicketCount();
+      const count = await connectedContract.TOTAL_TICKETS();
       setTotalTicketCount(count.toNumber());
     } catch (err) {
       console.log(err);

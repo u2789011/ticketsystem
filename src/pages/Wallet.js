@@ -15,11 +15,14 @@ function Wallet({ address }) {
   const [ticket, setTicket] = useState(null);
 
   const createTicketDisplay = (ticket) => {
-    const pinataURI = "https://gateway.pinata.cloud/ipfs/";
-    if (ticket.contract.address != process.env.REACT_APP_CONTRACT_ID) return;
+    // const pinataURI = "https://gateway.pinata.cloud/ipfs/";
+    console.log("ticket",ticket.contract.address)
+    console.log(ticket.contract.address !== process.env.REACT_APP_CONTRACT_ID)
+    if (ticket.contract.address !== process.env.REACT_APP_CONTRACT_ID) return;
+    console.log("ticket",ticket)
     return (
       <Link
-        href={ticket.permalink}
+        href={ticket.metadata.image}
         key={ticket.id.tokenId}
         isExternal
         width="100%"
@@ -30,8 +33,8 @@ function Wallet({ address }) {
         </Text>
         <Box padding="12px" border="1px solid black" borderRadius="12px">
           <Image
-            src={pinataURI + ticket.metadata.image.replace("ipfs://", "")}
-            alt={`NFTix #${ticket.id.tokenId}`}
+            src={ticket.metadata.image}
+            alt={ticket.metadata.name}
           />
         </Box>
       </Link>
@@ -39,9 +42,8 @@ function Wallet({ address }) {
   };
 
   // Alchemy URL
-  const baseURL = `https://eth-Goerli.g.alchemy.com/nft/v2/${process.env.REACT_APP_ALCHEMY_API_KEY}/getNFTs`;
+  const baseURL = `https://polygon-mumbai.g.alchemy.com/nft/v2/${process.env.REACT_APP_ALCHEMY_API_KEY}/getNFTs`;
   const url = `${baseURL}?contractAddress=${process.env.REACT_APP_CONTRACT_ID}&owner=${address}`;
-
   const config = {
     method: "get",
     url: url,
@@ -55,7 +57,7 @@ function Wallet({ address }) {
       // )
       .then((res) => {
         setLoadingTicket(true);
-
+        console.log("res", res)
         if (
           res.status === 200 &&
           res?.data?.ownedNfts &&
@@ -66,6 +68,7 @@ function Wallet({ address }) {
         setLoadingTicket(false);
       })
       .catch((err) => {
+        console.log(err)
         setLoadingTicket(false);
       });
   }, [address]);

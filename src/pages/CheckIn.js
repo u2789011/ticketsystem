@@ -26,7 +26,7 @@ function CheckIn({ connectedContract }) {
         title: "成功!",
         description: (
           <a
-            href={`https://goerli.etherscan.io/tx/${checkInTxn.hash}`}
+            href={`https://mumbai.polygonscan.com/tx/${checkInTxn.hash}`}
             target="_blank"
             rel="nofollow noreferrer"
           >

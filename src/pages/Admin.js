@@ -23,7 +23,7 @@ function Admin({ isOwner, connectedContract }) {
         variant: "subtle",
         description: (
           <a
-            href={`https://goerli.etherscan.io/tx/${closeSaleTxn.hash}`}
+            href={`https://mumbai.polygonscan.com/tx/${closeSaleTxn.hash}`}
             target="_blank"
             rel="nofollow noreferrer"
           >
@@ -59,7 +59,7 @@ function Admin({ isOwner, connectedContract }) {
         variant: "subtle",
         description: (
           <a
-            href={`https://goerli.etherscan.io/tx/${openSaleTxn.hash}`}
+            href={`https://mumbai.polygonscan.com/tx/${openSaleTxn.hash}`}
             target="_blank"
             rel="nofollow noreferrer"
           >

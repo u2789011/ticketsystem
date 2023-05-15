@@ -6,7 +6,7 @@ function Connect({ address, onConnect, onDisconnect }) {
   const navigate = useNavigate();
   const toast = useToast();
 
-  const isGoerliChain = async () => {
+  const isMumbaiChain = async () => {
     const { ethereum } = window;
     if (!ethereum) return false;
 
@@ -14,28 +14,28 @@ function Connect({ address, onConnect, onDisconnect }) {
       const chainId = await ethereum.request({
         method: "eth_chainId",
       });
-      return chainId === "0x5";
+      return chainId === "0x13881";
     } catch (err) {
       console.log(err);
       return false;
     }
   };
 
-  const switchToGoerliChain = async () => {
+  const switchToMumbaiChain = async () => {
     await window.ethereum.request({
       method: "wallet_switchEthereumChain",
       params: [
         {
-          chainId: "0x5",
+          chainId: "0x13881",
         },
       ],
     });
   };
 
   const connectWallet = async () => {
-    const isGoerli = await isGoerliChain();
+    const isGoerli = await isMumbaiChain();
     if (!isGoerli) {
-      await switchToGoerliChain();
+      await switchToMumbaiChain();
     }
 
     const { ethereum } = window;
@@ -58,15 +58,15 @@ function Connect({ address, onConnect, onDisconnect }) {
 
   useEffect(() => {
     const handleChainChanged = async () => {
-      const isGoerli = await isGoerliChain();
+      const isGoerli = await isMumbaiChain();
       if (!isGoerli) {
         toast({
-          title: "請切換至 Goerli 測試網路",
-          description: "將自動為您切換至 Goerli, 請至小狐狸錢包進行切換",
+          title: "請切換至 Mumbai 測試網路",
+          description: "將自動為您切換至 Mumbai, 請至小狐狸錢包進行切換",
           status: "warning",
           variant: "subtle"
         });
-        await switchToGoerliChain();
+        await switchToMumbaiChain();
       }
     };
 

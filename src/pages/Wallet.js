@@ -59,7 +59,7 @@ function Wallet({ address }) {
   return (
     <>
       <Heading mb={2}>我的票券</Heading>
-      {!loadingTicket && ticket && ticket.length >= 1 && (
+      {!loadingTicket && ticket && ticket.length > 1 && (
         <Text fontSize="xl" mb={2} width="100%">
           共持有 {ticket.length}{" "}
           張票券，每個錢包帳號僅可使用一張票券入場，請將多餘票券轉給其他欲入場的錢包帳號！

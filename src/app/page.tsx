@@ -1,236 +1,190 @@
 "use client";
 import { useEffect, useState } from "react";
-import { Contract, ethers } from "ethers";
-import Link from "next/link";
-
-import nfTixBooth from "../../contracts/nfTixBooth.json";
-
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEthereum } from "@fortawesome/free-brands-svg-icons";
-import {
-  faQrcode,
-  faTools,
-  faTicketAlt,
-} from "@fortawesome/free-solid-svg-icons";
-
-import Buy from "./buy/page";
-import Page from "../../components/Layout";
-import Connect from "../../components/Connect";
 import {
   Button,
+  ButtonGroup,
+  Heading,
+  Text,
   Flex,
-  Image,
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
-  MenuDivider,
+  useToast,
 } from "@chakra-ui/react";
-import { ChevronDownIcon, ChevronUpIcon } from "@chakra-ui/icons";
+import { Contract, ethers } from "ethers";
 
-export default function Home() {
-  const [address, setAddress] = useState<string | null | undefined>(null);
-  console.log("address:", address);
+type IndexProps = {
+  connectedContract: Contract | null;
+};
 
-  const [isOwner, setIsOwner] = useState(false);
-  console.log("isOwner", isOwner);
+const Buy = ({ connectedContract }: IndexProps) => {
+  console.log("BUY, connectedContract", connectedContract)
+  const toast = useToast();
+  const [totalTicketCount, setTotalTicketCount] = useState<number|null>(null);
+  console.log(totalTicketCount)
 
-  const [connectedContract, setConnectedContract] = useState<any>(null);
-  console.log("connectedContract", connectedContract);
+  const [availableTicketCountA, setAvailableTicketCountA] = useState<number|null>(null);
+  const [availableTicketCountB, setAvailableTicketCountB] = useState<number|null>(null);
+  const [availableTicketCountC, setAvailableTicketCountC] = useState<number|null>(null);
 
-  const [errorMessage, setErrorMessage] = useState<string>("");
-  console.log("errorMessage", errorMessage);
-
-  useEffect(() => {
-    const checkIsContractOwner = async () => {
-      if (!address || !connectedContract) return;
-
-      try {
-        const ownerAddress = await connectedContract.owner();
-        setIsOwner(address.toLowerCase() === ownerAddress.toLowerCase());
-      } catch (err: any) {
-        // Check if err is an Error object with a message property.
-        if (err instanceof Error && err.message) {
-          setErrorMessage(err.message);
-        } else {
-          // If not, use a generic error message.
-          setErrorMessage("An unknown error occurred.");
-        }
-      }
-    };
-    checkIsContractOwner();
-  }, [address, connectedContract]);
+  const [buyTxnPending, setBuyTxnPending] = useState(false);
 
   useEffect(() => {
-    if (!address) {
-      const previousAddress = window.localStorage.getItem("nftix-address");
+    if (!connectedContract) return;
 
-      if (previousAddress) {
-        setAddress(previousAddress);
-      }
-    }
-  }, [address]);
+    getAvailableTicketCountA();
+    getAvailableTicketCountB();
+    getAvailableTicketCountC();
+    getTotalTicketCount();
+  });
 
-  useEffect(() => {
-    const { ethereum } = window;
-    const handleNetworkChange = () => {
-      getConnectedContract();
-    };
-
-    ethereum.on("networkChanged", handleNetworkChange);
-
-    return () => {
-      ethereum.removeListener("networkChanged", handleNetworkChange);
-    };
-  }, [address, connectedContract]);
-
-  const getConnectedContract = async () => {
-    const { ethereum } = window;
-    if (!ethereum) return;
-
+  const buyTicket = async () => {
     try {
-      const provider = new ethers.BrowserProvider(ethereum);
-      const signer = await provider.getSigner();
-      console.log(
-        "process.env.NEXT_PUBLIC_CONTRACT_ID",
-        process.env.NEXT_PUBLIC_CONTRACT_ID
-      );
-      console.log("nfTixBooth.abi", nfTixBooth.abi);
-      console.log("signer", signer);
-      const connectedContract = new ethers.Contract(
-        process.env.NEXT_PUBLIC_CONTRACT_ID as string,
-        nfTixBooth.abi,
-        signer
-      );
-      setConnectedContract(connectedContract);
-    } catch (err: any) {
-      // Check if err is an Error object with a message property.
-      if (err instanceof Error && err.message) {
-        setErrorMessage(err.message);
-        console.log("setConnectedContract err.message", err.message);
-      } else {
-        // If not, use a generic error message.
-        setErrorMessage("An unknown error occurred.");
-      }
+      if (!connectedContract) return;
+
+      setBuyTxnPending(true);
+      const buyTxn = await connectedContract.mintA({
+        value: `${0.001 * 10 ** 18}`,
+      });
+
+      await buyTxn.wait();
+      setBuyTxnPending(false);
+      toast({
+        title: "成功!",
+        description: (
+          <a
+            href={`https://mumbai.polygonscan.com/tx/${buyTxn.hash}`}
+            target="_blank"
+            rel="nofollow noreferrer"
+          >
+            在區塊鏈瀏覽器確認交易！
+          </a>
+        ),
+        status: "success",
+        variant: "subtle",
+      });
+    } catch (err) {
+      console.log(err);
+        // if (err.code === ethers.errors.USER_REJECTED) {
+        //   toast({
+        //     title: "使用者拒絕簽署交易",
+        //     description: "請同意簽署本次購買票券之交易",
+        //     status: "warning",
+        //     variant: "subtle",
+        //   });
+        // } else if (err.code === 2000) {
+        //   toast({
+        //     title: "餘額不足",
+        //     description: "請加值您的錢包餘額",
+        //     status: "warning",
+        //     variant: "subtle",
+        //   });
+        // } else {
+        //   toast({
+        //     title: "錯誤",
+        //     description: "交易錯誤, 請通知系統管理員",
+        //     status: "error",
+        //     variant: "subtle",
+        //   });
+        // }
+
+      setBuyTxnPending(false);
+
+
     }
   };
 
-  useEffect(() => {
-    getConnectedContract();
-  }, []);
+  const getAvailableTicketCountA = async () => {
+    try {
+      const count = await connectedContract?.availableTicketsA();
+      console.log("connectedContract.availableTicketsA()",count)
+  
+      if (count) {
+        setAvailableTicketCountA(Number(count));
+      } else {
+        console.error("Unexpected result from availableTicketsA: ", count);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  const getAvailableTicketCountB = async () => {
+    try {
+      const count = await connectedContract?.availableTicketsB();
+      console.log("connectedContract.availableTicketsB()",count)
+  
+      if (count) {
+        setAvailableTicketCountB(Number(count));
+      } else {
+        console.error("Unexpected result from availableTicketsA: ", count);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const getAvailableTicketCountC = async () => {
+    try {
+      const count = await connectedContract?.availableTicketsC();
+      console.log("connectedContract.availableTicketsC()",count)
+  
+      if (count) {
+        setAvailableTicketCountC(Number(count));
+      } else {
+        console.error("Unexpected result from availableTicketsC: ", count);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const getTotalTicketCount = async () => {
+    try {
+      const count = await connectedContract?.TOTAL_TICKETS();
+      console.log("connectedContract.TOTAL_TICKETS()",count)
+      setTotalTicketCount(Number(count));
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   return (
     <>
-      <Connect
-        address={address}
-        onConnect={(address) => {
-          setAddress(address);
+      <Heading mb={4}>金鴿之夜</Heading>
+      <Text fontSize="xl" mb={4}>
+        請連結錢包鑄造NFT票券做為入場證明！
+      </Text>
+      <Flex
+        flexDirection="column"
+        alignItems="center"
+        justifyContent="center"
+        margin="0 auto"
+        maxW="140px"
+      >
+        <ButtonGroup mb={4}>
+          <Button
+            onClick={buyTicket}
+            isLoading={buyTxnPending}
+            loadingText="Pending"
+            size="lg"
+            colorScheme="teal"
+            style={{ backgroundColor: "teal !important" }}
+          >
+            購買票券
+          </Button>
 
-          window.localStorage.setItem("nftix-address", address);
-        }}
-        onDisconnect={() => {
-          setAddress(null);
-
-          window.localStorage.removeItem("nftix-address");
-        }}
-      />
-      <Page>
-        <Menu>
-          {({ isOpen }) => (
-            <>
-              <MenuButton
-                position="absolute"
-                top="12px"
-                right="16px"
-                as={Button}
-                colorScheme="purple"
-                style={{ backgroundColor: "purple !important" }}
-                rightIcon={isOpen ? <ChevronUpIcon /> : <ChevronDownIcon />}
-              >
-                選單
-              </MenuButton>
-              <MenuList>
-                <MenuItem>
-                  <Link href="/">
-                    <Flex
-                      alignItems="center"
-                      flexDirection="row"
-                      width="100%"
-                      justifyContent="space-between"
-                    >
-                      購買票券
-                      <FontAwesomeIcon icon={faEthereum} size="lg" />
-                    </Flex>
-                  </Link>
-                </MenuItem>
-                <MenuDivider />
-                <MenuItem isDisabled={!address}>
-                  <Link href="/wallet">
-                    <Flex
-                      alignItems="center"
-                      flexDirection="row"
-                      width="100%"
-                      justifyContent="space-between"
-                    >
-                      我的票券
-                      <FontAwesomeIcon icon={faTicketAlt} size="lg" />
-                    </Flex>
-                  </Link>
-                </MenuItem>
-                <MenuDivider />
-                <MenuItem isDisabled={!isOwner}>
-                  <Link href="/checkin">
-                    <Flex
-                      alignItems="center"
-                      flexDirection="row"
-                      width="100%"
-                      justifyContent="space-between"
-                    >
-                      入場掃描
-                      <FontAwesomeIcon icon={faQrcode} size="lg" />
-                    </Flex>
-                  </Link>
-                </MenuItem>
-                <MenuDivider />
-                <MenuItem isDisabled={!isOwner}>
-                  <Link href="admin">
-                    <Flex
-                      alignItems="center"
-                      flexDirection="row"
-                      width="100%"
-                      justifyContent="space-between"
-                    >
-                      設定
-                      <FontAwesomeIcon icon={faTools} size="lg" />
-                    </Flex>
-                  </Link>
-                </MenuItem>
-              </MenuList>
-            </>
-          )}
-        </Menu>
-        <Flex
-          alignItems="flex-start"
-          flex="1 1 auto"
-          flexDirection="column"
-          justifyContent="center"
-          width="100%"
-        >
-          <Image
-            src="/devdao.svg"
-            alt="DevDAO logo"
-            margin="36px auto 12px"
-            width="15%"
-          />
-          {/* show buy page */}
-          <Buy connectedContract={connectedContract} />
-        </Flex>
-      </Page>
-      {errorMessage && (
-        <Flex mt={4} color="red.500" fontWeight="bold">
-          <p>{errorMessage}</p>
-        </Flex>
-      )}
+        </ButtonGroup>
+        {availableTicketCountA && totalTicketCount && (
+          <Text>
+            總共 {totalTicketCount} 張票
+            <br />
+            A區還剩 {availableTicketCountA} 張！
+            <br />
+            B區還剩 {availableTicketCountB} 張！
+            <br />
+            C區還剩 {availableTicketCountC} 張！
+          </Text>
+        )}
+      </Flex>
     </>
   );
-}
+};
+
+export default Buy;

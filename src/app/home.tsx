@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, createContext, useContext } from "react";
 import { Contract, ethers } from "ethers";
 import Link from "next/link";
 
@@ -28,10 +28,17 @@ import {
 import { ChevronDownIcon, ChevronUpIcon } from "@chakra-ui/icons";
 
 type Props = {
-    children: any
-  }
+  children: any;
+};
 
-export default function Home({children} : Props) {
+type Context = {
+  address: string | null | undefined;
+  isOwner: boolean;
+  connectedContract: Contract | null;
+};
+export const HomeContext = createContext<Context | undefined>(undefined);
+
+export default function Home({ children }: Props) {
   const [address, setAddress] = useState<string | null | undefined>(null);
   console.log("address:", address);
 
@@ -43,6 +50,8 @@ export default function Home({children} : Props) {
 
   const [errorMessage, setErrorMessage] = useState<string>("");
   console.log("errorMessage", errorMessage);
+
+
 
   useEffect(() => {
     const checkIsContractOwner = async () => {
@@ -120,10 +129,11 @@ export default function Home({children} : Props) {
 
   useEffect(() => {
     getConnectedContract();
+    console.log("getConnectedContract", connectedContract)
   }, []);
 
   return (
-    <>
+    <HomeContext.Provider value={{ address, isOwner, connectedContract }}>
       <Connect
         address={address}
         onConnect={(address) => {
@@ -235,6 +245,6 @@ export default function Home({children} : Props) {
           <p>{errorMessage}</p>
         </Flex>
       )}
-    </>
+    </HomeContext.Provider>
   );
 }

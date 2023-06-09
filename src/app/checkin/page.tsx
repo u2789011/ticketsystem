@@ -1,12 +1,18 @@
-'use client';
+"use client";
 
 import { Box, Button, Flex, Heading, Text, useToast } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
+import { HomeContext } from "../home";
 
 // @ts-ignore
 import QrReader from "react-qr-scanner";
 
-function CheckIn({ connectedContract }: any) {
+function CheckIn() {
+  const context = useContext(HomeContext);
+  if (context === undefined) {
+    throw new Error("useContext undefined");
+  }
+  const { connectedContract } = context;
   const toast = useToast();
   const [showScanner, setShowScanner] = useState(false);
   // const [data, setData] = useState("No result");
@@ -176,4 +182,3 @@ function CheckIn({ connectedContract }: any) {
 }
 
 export default CheckIn;
-

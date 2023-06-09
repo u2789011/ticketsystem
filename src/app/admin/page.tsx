@@ -1,13 +1,15 @@
 "use client"
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { Button, Flex, Heading, Text, useToast } from "@chakra-ui/react";
 import { Contract, ethers } from "ethers";
-type IndexProps = {
-  isOwner: boolean;
-  connectedContract: Contract | null;
-};
+import { HomeContext } from "../home";
 
-const index = ({ isOwner, connectedContract }: IndexProps) => {
+const index = () => {
+  const context = useContext(HomeContext);
+  if (context === undefined) {
+    throw new Error("useContext undefined");
+  }
+  const { connectedContract, isOwner } = context;
   const toast = useToast();
   const [openSaleTxnPending, setOpenSaleTxnPending] = useState(false);
 

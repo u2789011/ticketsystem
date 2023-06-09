@@ -9,12 +9,18 @@ import {
   Link,
   Text,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
+import { HomeContext } from "../home";
 
 // @ts-ignore
 import axios from "axios";
 
-function Wallet({ address }: any) {
+function Wallet() {
+  const context = useContext(HomeContext);
+  if (context === undefined) {
+    throw new Error('useContext undefined')
+  }
+  const { address } = context;
   const [loadingTicket, setLoadingTicket] = useState(false);
   const [ticket, setTicket] = useState<[any] | null>(null);
 
@@ -23,7 +29,7 @@ function Wallet({ address }: any) {
     // console.log("ticket.contract.address", ticket.contract.address);
     // console.log("process.env.REACT_APP_CONTRACT_ID", process.env.REACT_APP_CONTRACT_ID)
     // console.log(ticket.contract.address.toString() !== process.env.REACT_APP_CONTRACT_ID);
-    if (ticket.contract.address.toLowerCase() !== process.env.REACT_APP_CONTRACT_ID?.toLowerCase()) return;
+    if (ticket.contract.address.toLowerCase() !== process.env.NEXT_PUBLIC_CONTRACT_ID?.toLowerCase()) return;
     console.log("ticket", ticket);
     return (
       <Link
@@ -44,8 +50,8 @@ function Wallet({ address }: any) {
   };
 
   // Alchemy URL
-  const baseURL = `https://polygon-mumbai.g.alchemy.com/nft/v2/${process.env.REACT_APP_ALCHEMY_API_KEY}/getNFTs`;
-  const url = `${baseURL}?contractAddress=${process.env.REACT_APP_CONTRACT_ID}&owner=${address}`;
+  const baseURL = `https://polygon-mumbai.g.alchemy.com/nft/v2/${process.env.NEXT_PUBLIC_ALCHEMY_API_KEY}/getNFTs`;
+  const url = `${baseURL}?contractAddress=${process.env.NEXT_PUBLIC_CONTRACT_ID}&owner=${address}`;
   const config = {
     method: "get",
     url: url,

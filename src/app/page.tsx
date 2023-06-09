@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import {
   Button,
   ButtonGroup,
@@ -9,17 +9,17 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { Contract, ethers } from "ethers";
+import { HomeContext } from "./home";
 
-type IndexProps = {
-  connectedContract: Contract | null;
-};
-
-const Buy = ({ connectedContract }: IndexProps) => {
-  console.log("BUY, connectedContract", connectedContract)
+const Buy = () => {
+  const context = useContext(HomeContext);
+  if (context === undefined) {
+    throw new Error('useContext undefined')
+  }
+  console.log("BUY, context", context)
+  const { connectedContract } = context;
   const toast = useToast();
   const [totalTicketCount, setTotalTicketCount] = useState<number|null>(null);
-  console.log(totalTicketCount)
-
   const [availableTicketCountA, setAvailableTicketCountA] = useState<number|null>(null);
   const [availableTicketCountB, setAvailableTicketCountB] = useState<number|null>(null);
   const [availableTicketCountC, setAvailableTicketCountC] = useState<number|null>(null);
@@ -33,6 +33,7 @@ const Buy = ({ connectedContract }: IndexProps) => {
     getAvailableTicketCountB();
     getAvailableTicketCountC();
     getTotalTicketCount();
+    console.log(availableTicketCountA, availableTicketCountB, availableTicketCountC, totalTicketCount)
   });
 
   const buyTicket = async () => {
@@ -94,44 +95,46 @@ const Buy = ({ connectedContract }: IndexProps) => {
   const getAvailableTicketCountA = async () => {
     try {
       const count = await connectedContract?.availableTicketsA();
-      console.log("connectedContract.availableTicketsA()",count)
   
-      if (count) {
+      if (typeof count === 'bigint') {
         setAvailableTicketCountA(Number(count));
+        console.log("connectedContract.availableTicketsA()", count);
       } else {
         console.error("Unexpected result from availableTicketsA: ", count);
       }
-    } catch (err) {
-      console.log(err);
+    } catch (err: any) {
+      console.error(err);
+      // 在此處進行錯誤處理，例如設置一個狀態以顯示錯誤消息
     }
   };
   const getAvailableTicketCountB = async () => {
     try {
       const count = await connectedContract?.availableTicketsB();
-      console.log("connectedContract.availableTicketsB()",count)
   
-      if (count) {
+      if (typeof count === 'bigint') {
         setAvailableTicketCountB(Number(count));
+        console.log("connectedContract.availableTicketsB()", count);
       } else {
-        console.error("Unexpected result from availableTicketsA: ", count);
+        console.error("Unexpected result from availableTicketsB: ", count);
       }
-    } catch (err) {
-      console.log(err);
+    } catch (err: any) {
+      console.error(err);
     }
   };
 
   const getAvailableTicketCountC = async () => {
     try {
       const count = await connectedContract?.availableTicketsC();
-      console.log("connectedContract.availableTicketsC()",count)
   
-      if (count) {
+      if (typeof count === 'bigint') {
         setAvailableTicketCountC(Number(count));
+        console.log("connectedContract.availableTicketsC()", count);
       } else {
         console.error("Unexpected result from availableTicketsC: ", count);
       }
-    } catch (err) {
-      console.log(err);
+    } catch (err: any) {
+      console.error(err);
+      // 在此處進行錯誤處理，例如設置一個狀態以顯示錯誤消息
     }
   };
 
@@ -171,7 +174,7 @@ const Buy = ({ connectedContract }: IndexProps) => {
           </Button>
 
         </ButtonGroup>
-        {availableTicketCountA && totalTicketCount && (
+        {totalTicketCount && (
           <Text>
             總共 {totalTicketCount} 張票
             <br />

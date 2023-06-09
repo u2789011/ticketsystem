@@ -6,10 +6,10 @@ import {
   Heading,
   Text,
   Flex,
-  useToast,
 } from "@chakra-ui/react";
-import { Contract, ethers } from "ethers";
 import { HomeContext } from "./home";
+import useCustomToast from "../../components/hooks/useCustomToast";
+
 
 const Buy = () => {
   const context = useContext(HomeContext);
@@ -18,7 +18,7 @@ const Buy = () => {
   }
   console.log("BUY, context", context)
   const { connectedContract } = context;
-  const toast = useToast();
+  const { showSuccessToastWithReactNode, showErrorToast, showWarningToast } = useCustomToast();
   const [totalTicketCount, setTotalTicketCount] = useState<number|null>(null);
   const [availableTicketCountA, setAvailableTicketCountA] = useState<number|null>(null);
   const [availableTicketCountB, setAvailableTicketCountB] = useState<number|null>(null);
@@ -47,48 +47,36 @@ const Buy = () => {
 
       await buyTxn.wait();
       setBuyTxnPending(false);
-      toast({
-        title: "成功!",
-        description: (
-          <a
-            href={`https://mumbai.polygonscan.com/tx/${buyTxn.hash}`}
-            target="_blank"
-            rel="nofollow noreferrer"
-          >
-            在區塊鏈瀏覽器確認交易！
-          </a>
-        ),
-        status: "success",
-        variant: "subtle",
-      });
-    } catch (err) {
-      console.log(err);
-        // if (err.code === ethers.errors.USER_REJECTED) {
-        //   toast({
-        //     title: "使用者拒絕簽署交易",
-        //     description: "請同意簽署本次購買票券之交易",
-        //     status: "warning",
-        //     variant: "subtle",
-        //   });
-        // } else if (err.code === 2000) {
-        //   toast({
-        //     title: "餘額不足",
-        //     description: "請加值您的錢包餘額",
-        //     status: "warning",
-        //     variant: "subtle",
-        //   });
-        // } else {
-        //   toast({
-        //     title: "錯誤",
-        //     description: "交易錯誤, 請通知系統管理員",
-        //     status: "error",
-        //     variant: "subtle",
-        //   });
-        // }
-
+      showSuccessToastWithReactNode(
+        "Sale is closed!",
+        <a
+          href={`https://mumbai.polygonscan.com/tx/${buyTxn.hash}`}
+          target="_blank"
+          rel="nofollow noreferrer"
+        >
+          在區塊鏈瀏覽器確認交易！
+        </a>
+      );
+    } catch (err:any) {
+      console.log("buyTxn", err);
+      console.log("buyTxn", err.code);
+        if (err?.code === "ACTION_REJECTED") {
+          showWarningToast(
+            "使用者拒絕簽署交易",
+            "請同意簽署本次購買票券之交易"
+          );
+        } else if (err.code === "INSUFFICIENT_FUNDS") {
+          showWarningToast(
+            "餘額不足",
+            "請加值您的錢包餘額"
+          );
+        } else {
+          showErrorToast(
+            "錯誤",
+            "交易錯誤, 請通知系統管理員."
+          );
+        }
       setBuyTxnPending(false);
-
-
     }
   };
 
@@ -104,7 +92,6 @@ const Buy = () => {
       }
     } catch (err: any) {
       console.error(err);
-      // 在此處進行錯誤處理，例如設置一個狀態以顯示錯誤消息
     }
   };
   const getAvailableTicketCountB = async () => {

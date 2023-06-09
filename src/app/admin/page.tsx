@@ -1,8 +1,8 @@
-"use client"
+"use client";
 import { useState, useContext } from "react";
 import { Button, Flex, Heading, Text, useToast } from "@chakra-ui/react";
-import { Contract, ethers } from "ethers";
 import { HomeContext } from "../home";
+import useCustomToast from "../../../components/hooks/useCustomToast";
 
 const index = () => {
   const context = useContext(HomeContext);
@@ -10,7 +10,7 @@ const index = () => {
     throw new Error("useContext undefined");
   }
   const { connectedContract, isOwner } = context;
-  const toast = useToast();
+  const { showSuccessToastWithReactNode, showErrorToast } = useCustomToast();
   const [openSaleTxnPending, setOpenSaleTxnPending] = useState(false);
 
   const [closeSaleTxnPending, setCloseSaleTxnPending] = useState(false);
@@ -25,29 +25,23 @@ const index = () => {
       await closeSaleTxn.wait();
       setCloseSaleTxnPending(false);
 
-      toast({
-        status: "success",
-        title: "Sale is closed!",
-        variant: "subtle",
-        description: (
-          <a
-            href={`https://mumbai.polygonscan.com/tx/${closeSaleTxn.hash}`}
-            target="_blank"
-            rel="nofollow noreferrer"
-          >
-            在區塊鏈瀏覽器確認交易！
-          </a>
-        ),
-      });
-    } catch (error) {
-      console.log(error);
+      showSuccessToastWithReactNode(
+        "Sale is closed!",
+        <a
+          href={`https://mumbai.polygonscan.com/tx/${closeSaleTxn.hash}`}
+          target="_blank"
+          rel="nofollow noreferrer"
+        >
+          在區塊鏈瀏覽器確認交易！
+        </a>
+      );
+    } catch (err) {
+      console.log(err);
       setCloseSaleTxnPending(true);
-      toast({
-        title: "Failure",
-        description: error?.toString(),
-        status: "error",
-        variant: "subtle",
-      });
+      showErrorToast(
+        "Failure",
+        err?.toString() || "An unknown error occurred."
+      );
     }
   };
 
@@ -60,30 +54,23 @@ const index = () => {
 
       await openSaleTxn.wait();
       setOpenSaleTxnPending(false);
-
-      toast({
-        status: "success",
-        title: "Sale is open!",
-        variant: "subtle",
-        description: (
-          <a
-            href={`https://mumbai.polygonscan.com/tx/${openSaleTxn.hash}`}
-            target="_blank"
-            rel="nofollow noreferrer"
-          >
-            在區塊鏈瀏覽器確認交易！
-          </a>
-        ),
-      });
-    } catch (error) {
-      console.log(error);
+      showSuccessToastWithReactNode(
+        "Sale is closed!",
+        <a
+          href={`https://mumbai.polygonscan.com/tx/${openSaleTxn.hash}`}
+          target="_blank"
+          rel="nofollow noreferrer"
+        >
+          在區塊鏈瀏覽器確認交易！
+        </a>
+      );
+    } catch (err) {
+      console.log(err);
       setOpenSaleTxnPending(false);
-      toast({
-        title: "Failure",
-        description: error?.toString(),
-        status: "error",
-        variant: "subtle",
-      });
+      showErrorToast(
+        "Failure",
+        err?.toString() || "An unknown error occurred."
+      );
     }
   };
 
@@ -116,7 +103,7 @@ const index = () => {
         </Button>
       </Flex>
     </>
-  )
-}
+  );
+};
 
-export default index
+export default index;

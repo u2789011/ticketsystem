@@ -1,9 +1,9 @@
 "use client";
 import { useEffect } from "react";
 import { useRouter } from 'next/navigation';
-import { Button, Box, Flex, useToast } from "@chakra-ui/react";
-import { ethers } from "ethers";
+import { Button, Box, Flex } from "@chakra-ui/react";
 import { MetaMaskInpageProvider } from "@metamask/providers";
+import useCustomToast from '../components/hooks/useCustomToast';
 
 type ConnectProps = {
   address: string | null | undefined;
@@ -21,8 +21,8 @@ const Connect = ({ address, onConnect, onDisconnect }: ConnectProps) => {
     console.log("address",address)
     console.log("onConnect",onConnect)
 
-  const toast = useToast();
   const router = useRouter();
+  const { showWarningToast } = useCustomToast();
 
   const isMumbaiChain = async () => {
     const { ethereum } = window;
@@ -80,12 +80,10 @@ const Connect = ({ address, onConnect, onDisconnect }: ConnectProps) => {
     const handleChainChanged = async () => {
       const isGoerli = await isMumbaiChain();
       if (!isGoerli) {
-        toast({
-          title: "請切換至 Mumbai 測試網路",
-          description: "將自動為您切換至 Mumbai, 請至小狐狸錢包進行切換",
-          status: "warning",
-          variant: "subtle",
-        });
+        showWarningToast(
+          "請切換至 Mumbai 測試網路",
+          "將自動為您切換至 Mumbai, 請至小狐狸錢包進行切換"
+        );
         await switchToMumbaiChain();
       }
     };
@@ -100,7 +98,7 @@ const Connect = ({ address, onConnect, onDisconnect }: ConnectProps) => {
         ethereum.removeListener("chainChanged", handleChainChanged);
       }
     };
-  }, [toast]);
+  }, []);
 
   return (
     <Flex

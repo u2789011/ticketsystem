@@ -3,6 +3,7 @@
 import { Box, Button, Flex, Heading, Text, useToast } from "@chakra-ui/react";
 import { useEffect, useState, useContext } from "react";
 import { HomeContext } from "../home";
+import useCustomToast from "../../../components/hooks/useCustomToast";
 
 // @ts-ignore
 import QrReader from "react-qr-scanner";
@@ -13,7 +14,7 @@ function CheckIn() {
     throw new Error("useContext undefined");
   }
   const { connectedContract } = context;
-  const toast = useToast();
+  const { showSuccessToast, showSuccessToastWithReactNode, showErrorToast } = useCustomToast();
   const [showScanner, setShowScanner] = useState(false);
   // const [data, setData] = useState("No result");
   const [scannedAddress, setScannedAddress] = useState(null);
@@ -32,29 +33,23 @@ function CheckIn() {
       await checkInTxn.wait();
       setCheckInTxnPending(false);
 
-      toast({
-        title: "成功!",
-        description: (
-          <a
-            href={`https://mumbai.polygonscan.com/tx/${checkInTxn.hash}`}
-            target="_blank"
-            rel="nofollow noreferrer"
-          >
-            在區塊鏈瀏覽器確認交易！
-          </a>
-        ),
-        status: "success",
-        variant: "subtle",
-      });
+      showSuccessToastWithReactNode(
+        "成功",
+        <a
+          href={`https://mumbai.polygonscan.com/tx/${checkInTxn.hash}`}
+          target="_blank"
+          rel="nofollow noreferrer"
+        >
+          在區塊鏈瀏覽器確認交易！
+        </a>
+      );
     } catch (err) {
       console.log(err);
       setCheckInTxnPending(false);
-      toast({
-        title: "錯誤",
-        description: "CheckIn入場錯誤,請向工作人員尋求人工協助",
-        status: "error",
-        variant: "subtle",
-      });
+      showErrorToast(
+        "錯誤",
+        "CheckIn入場錯誤,請向工作人員尋求人工協助"
+      );
     }
   };
 
@@ -134,14 +129,12 @@ function CheckIn() {
                 width: "100%",
                 margin: "0",
               }}
-              onError={(error: any) => {
-                console.log(error);
-                toast({
-                  title: "錯誤",
-                  description: "無法讀取 QR Code",
-                  status: "error",
-                  variant: "subtle",
-                });
+              onError={(err: any) => {
+                console.log(err);
+                showErrorToast(
+                  "錯誤",
+                  "無法讀取 QR Code"
+                );
                 setShowScanner(false);
               }}
               onScan={(data: any) => {
@@ -152,13 +145,11 @@ function CheckIn() {
                 console.log(address);
                 setScannedAddress(address);
                 setShowScanner(false);
-                toast({
-                  title: "掃描成功!",
-                  description: `${address.slice(0, 6)}
-                    ...${address.slice(-4)}`,
-                  status: "success",
-                  variant: "subtle",
-                });
+                showSuccessToast(
+                  "掃描成功!",
+                  `${address.slice(0, 6)}
+                    ...${address.slice(-4)}`
+                );
               }}
             />
           </Box>

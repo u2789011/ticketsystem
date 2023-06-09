@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState, createContext, useContext } from "react";
+import { useEffect, useState, createContext } from "react";
 import { Contract, ethers } from "ethers";
 import Link from "next/link";
 
@@ -103,12 +103,6 @@ export default function Home({ children }: Props) {
     try {
       const provider = new ethers.BrowserProvider(ethereum);
       const signer = await provider.getSigner();
-      console.log(
-        "process.env.NEXT_PUBLIC_CONTRACT_ID",
-        process.env.NEXT_PUBLIC_CONTRACT_ID
-      );
-      console.log("nfTixBooth.abi", nfTixBooth.abi);
-      console.log("signer", signer);
       const connectedContract = new ethers.Contract(
         process.env.NEXT_PUBLIC_CONTRACT_ID as string,
         nfTixBooth.abi,

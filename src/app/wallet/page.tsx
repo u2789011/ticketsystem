@@ -29,8 +29,6 @@ function Wallet() {
     // console.log("ticket.contract.address", ticket.contract.address);
     // console.log("process.env.REACT_APP_CONTRACT_ID", process.env.REACT_APP_CONTRACT_ID)
     // console.log(ticket.contract.address.toString() !== process.env.REACT_APP_CONTRACT_ID);
-    if (ticket.contract.address.toLowerCase() !== process.env.NEXT_PUBLIC_CONTRACT_ID?.toLowerCase()) return;
-    console.log("ticket", ticket);
     return (
       <Link
         href={ticket.metadata.image}
@@ -60,9 +58,6 @@ function Wallet() {
   useEffect(() => {
     if (!address) return;
     axios(config)
-      // .get(
-      //   // `https://testnets-api.opensea.io/api/v1/assets?owner=${address}&asset_contract_address=${process.env.REACT_APP_CONTRACT_ID}`
-      // )
       .then((res: any) => {
         setLoadingTicket(true);
         console.log("res", res);
@@ -80,6 +75,19 @@ function Wallet() {
         setLoadingTicket(false);
       });
   }, [address]);
+
+  /**
+   * Filter the ticket which contract address is the same as the contract address in .env
+   */
+     let validTickets = [];
+     if (!loadingTicket && ticket) {
+       validTickets = ticket.filter(
+         (t) =>
+           t.contract.address.toLowerCase() ===
+           process.env.NEXT_PUBLIC_CONTRACT_ID?.toLowerCase()
+       );
+     }
+     console.log(validTickets);
   return (
     <>
       <Heading mb={2}>我的票券</Heading>
@@ -92,8 +100,10 @@ function Wallet() {
             size="120px"
           />
         )}
-        {!loadingTicket && ticket && ticket?.map(createTicketDisplay)}
-        {!loadingTicket && !ticket && (
+        {!loadingTicket &&
+          validTickets.length > 0 &&
+          validTickets.map(createTicketDisplay)}
+        {!loadingTicket && validTickets.length === 0 && (
           <Text fontSize="xl" mb={2} width="100%">
             尚未擁有任何票券 😢
           </Text>

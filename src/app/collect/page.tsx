@@ -1,13 +1,6 @@
 "use client";
-import {
-  Box,
-  Button,
-  Flex,
-  Heading,
-  Text,
-  Divider,
-} from "@chakra-ui/react";
-import { useEffect, useState, useContext } from "react";
+import { Box, Button, Flex, Heading, Text, Divider } from "@chakra-ui/react";
+import { useEffect, useState, useContext, useCallback } from "react";
 import { HomeContext } from "../home";
 import useCustomToast from "../../../components/hooks/useCustomToast";
 // @ts-ignore
@@ -32,15 +25,15 @@ function Collect() {
   const [checkInTxnPending2, setCheckInTxnPending2] = useState(false);
 
   /**
-   * Trigger smart contract checkInStage1 function.
-   * This function is used to check in the user and mark them as attended the stage1.
+   * Trigger smart contract checkInStage1,2 function.
+   * This function is used to check in the user and mark them as attended the stage1,2
    */
-  const checkIn1 = async () => {
-    try {
+  const checkIn = useCallback(
+    async (stage: number) => {
       if (!connectedContract) return;
-
-      setCheckInTxnPending1(true);
-      const checkInTxn = await connectedContract.checkInStage1(scannedAddress);
+      const checkInTxn = await connectedContract[`checkInStage${stage}`](
+        scannedAddress
+      );
 
       // Show pending confirmation toast after 5 seconds
       const pendingToastId = setTimeout(() => {
@@ -59,7 +52,11 @@ function Collect() {
       await checkInTxn.wait();
       // Clear the pending confirmation toast if transaction is already confirmed
       clearTimeout(pendingToastId);
-      setCheckInTxnPending1(false);
+      if (stage === 1) {
+        setCheckInTxnPending1(false);
+      } else if (stage === 2) {
+        setCheckInTxnPending2(false);
+      }
 
       showSuccessToastWithReactNode(
         "成功",
@@ -71,57 +68,31 @@ function Collect() {
           在區塊鏈瀏覽器確認交易！
         </a>
       );
-    } catch (err) {
+    },
+    [
+      connectedContract,
+      scannedAddress,
+      showInfoToastWithReactNode,
+      showSuccessToastWithReactNode,
+    ]
+  );
+
+  const checkIn1 = () => {
+    setCheckInTxnPending1(true);
+    checkIn(1).catch((err) => {
       console.log(err);
       setCheckInTxnPending1(false);
       showErrorToast("錯誤", "蒐集發生錯誤,請向工作人員尋求人工協助");
-    }
+    });
   };
 
-  /**
-   * Trigger smart contract checkInStage2 function.
-   * This function is used to check in the user and mark them as attended the stage2.
-   */
-  const checkIn2 = async () => {
-    try {
-      if (!connectedContract) return;
-
-      setCheckInTxnPending2(true);
-      const checkInTxn = await connectedContract.checkInStage2(scannedAddress);
-
-      // Show pending confirmation toast after 5 seconds
-      const pendingToastId = setTimeout(() => {
-        showInfoToastWithReactNode(
-          "已送出交易",
-          <a
-            href={`https://mumbai.polygonscan.com/tx/${checkInTxn.hash}`}
-            target="_blank"
-            rel="nofollow noreferrer"
-          >
-            交易已送出，在區塊鏈瀏覽器確認進度！
-          </a>
-        );
-      }, 5000);
-
-      await checkInTxn.wait();
-      // Clear the pending confirmation toast if transaction is already confirmed
-      clearTimeout(pendingToastId);
-      setCheckInTxnPending2(false);
-      showSuccessToastWithReactNode(
-        "成功",
-        <a
-          href={`https://mumbai.polygonscan.com/tx/${checkInTxn.hash}`}
-          target="_blank"
-          rel="nofollow noreferrer"
-        >
-          在區塊鏈瀏覽器確認交易！
-        </a>
-      );
-    } catch (err) {
+  const checkIn2 = () => {
+    setCheckInTxnPending2(true);
+    checkIn(2).catch((err) => {
       console.log(err);
       setCheckInTxnPending2(false);
       showErrorToast("錯誤", "蒐集發生錯誤,請向工作人員尋求人工協助");
-    }
+    });
   };
 
   /**
@@ -216,14 +187,14 @@ function Collect() {
                 width: "100%",
                 margin: "0",
               }}
-              onError={(error:any) => {
+              onError={(error: any) => {
                 console.log(error);
                 showErrorToast("錯誤", "無法讀取 QR Code");
                 setShowScanner(false);
               }}
-              onScan={(data:any) => {
+              onScan={(data: any) => {
                 if (!data) return;
-                console.log("onScan",data);
+                console.log("onScan", data);
                 // const address = data.text.split("ethereum:");
                 const address = data.text.substr(9, 42);
                 console.log(address);

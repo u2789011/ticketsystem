@@ -1,10 +1,9 @@
 "use client";
 
-import { Box, Button, Flex, Heading, Text, useToast } from "@chakra-ui/react";
+import { Box, Button, Flex, Heading, Text } from "@chakra-ui/react";
 import { useEffect, useState, useContext } from "react";
 import { HomeContext } from "../home";
 import useCustomToast from "../../../components/hooks/useCustomToast";
-
 // @ts-ignore
 import QrReader from "react-qr-scanner";
 

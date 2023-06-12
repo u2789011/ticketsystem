@@ -25,6 +25,20 @@ const useCustomToast = () => {
     });
   };
 
+  const showInfoToastWithReactNode = (
+    title: string,
+    description: React.ReactNode
+  ) => {
+    toast({
+      title: title,
+      description: description,
+      status: "info",
+      variant: "subtle",
+      isClosable: true,
+      duration: 5000,
+    });
+  };
+
   const showErrorToast = (title: string, description: string) => {
     toast({
       title: title,
@@ -42,7 +56,14 @@ const useCustomToast = () => {
       variant: "subtle",
     });
   };
-  return { showSuccessToast, showSuccessToastWithReactNode, showErrorToast, showWarningToast };
+
+  return {
+    showSuccessToast,
+    showSuccessToastWithReactNode,
+    showInfoToastWithReactNode,
+    showErrorToast,
+    showWarningToast,
+  };
 };
 
 export default useCustomToast;

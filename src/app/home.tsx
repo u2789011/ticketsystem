@@ -11,6 +11,7 @@ import {
   faQrcode,
   faTools,
   faTicketAlt,
+  faWallet,
 } from "@fortawesome/free-solid-svg-icons";
 
 import Page from "../../components/Layout";
@@ -50,8 +51,6 @@ export default function Home({ children }: Props) {
 
   const [errorMessage, setErrorMessage] = useState<string>("");
   console.log("errorMessage", errorMessage);
-
-
 
   useEffect(() => {
     const checkIsContractOwner = async () => {
@@ -123,7 +122,7 @@ export default function Home({ children }: Props) {
 
   useEffect(() => {
     getConnectedContract();
-    console.log("getConnectedContract", connectedContract)
+    console.log("getConnectedContract", connectedContract);
   }, []);
 
   return (
@@ -195,6 +194,20 @@ export default function Home({ children }: Props) {
                     >
                       入場掃描
                       <FontAwesomeIcon icon={faQrcode} size="lg" />
+                    </Flex>
+                  </Link>
+                </MenuItem>
+                <MenuDivider />
+                <MenuItem isDisabled={false}>
+                  <Link href="/collect">
+                    <Flex
+                      alignItems="center"
+                      flexDirection="row"
+                      width="100%"
+                      justifyContent="space-between"
+                    >
+                      蒐集掃描
+                      <FontAwesomeIcon icon={faWallet} size="lg" />
                     </Flex>
                   </Link>
                 </MenuItem>

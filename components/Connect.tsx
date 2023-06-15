@@ -100,6 +100,29 @@ const Connect = ({ address, onConnect, onDisconnect }: ConnectProps) => {
     };
   }, []);
 
+  // Listen for metamask wallet change account events
+  useEffect(() => {
+    const handleAccountsChanged =  (...accounts: unknown[])  => {
+      const castedAccounts = accounts as string[];
+      if (castedAccounts.length === 0) {
+        // MetaMask is locked or the user has not connected any accounts
+        console.log('Please connect to MetaMask.');
+      } else if (castedAccounts[0] !== address) {
+        onConnect(castedAccounts[0]);
+      }
+    };
+    // add accountsChanged event listener
+    if (window.ethereum) {
+      window.ethereum.on('accountsChanged', handleAccountsChanged);
+    }
+    // Cleanup function
+    return () => {
+      if (window.ethereum) {
+        window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
+      }
+    };
+  }, [address, onConnect]);
+
   return (
     <Flex
       fontWeight="bold"
@@ -136,8 +159,8 @@ const Connect = ({ address, onConnect, onDisconnect }: ConnectProps) => {
         )}
         {address && (
           <span>
-            💳 {address.slice(0, 6)}
-            ...{address.slice(-4)}
+            💳 {address.toString().slice(0, 6)}
+            ...{address.toString().slice(-4)}
           </span>
         )}
       </Box>

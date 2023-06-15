@@ -94,7 +94,7 @@ const Buy = () => {
       await buyTxn.wait();
       setBuyTxnPending(false);
       showSuccessToastWithReactNode(
-        "Sale is closed!",
+        "成功",
         <a
           href={`https://mumbai.polygonscan.com/tx/${buyTxn.hash}`}
           target="_blank"
@@ -110,6 +110,8 @@ const Buy = () => {
         showWarningToast("使用者拒絕簽署交易", "請同意簽署本次購買票券之交易");
       } else if (err.code === "INSUFFICIENT_FUNDS") {
         showWarningToast("餘額不足", "請加值您的錢包餘額");
+      } else if (err.message.includes("Invalid option")) {
+        showWarningToast("警告", "請選擇票種");
       } else {
         showErrorToast("錯誤", "交易錯誤, 請通知系統管理員.");
       }

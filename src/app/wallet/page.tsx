@@ -21,7 +21,7 @@ function Wallet() {
     throw new Error("useContext undefined");
   }
   const { address } = context;
-  const [loadingTicket, setLoadingTicket] = useState<boolean>(false);
+  const [loadingTicket, setLoadingTicket] = useState<boolean>(true);
   const [ticket, setTicket] = useState<[any] | null>(null);
 
   const createTicketDisplay = (ticket: any) => {

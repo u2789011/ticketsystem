@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import {
   Box,
@@ -18,10 +18,10 @@ import axios from "axios";
 function Wallet() {
   const context = useContext(HomeContext);
   if (context === undefined) {
-    throw new Error('useContext undefined')
+    throw new Error("useContext undefined");
   }
   const { address } = context;
-  const [loadingTicket, setLoadingTicket] = useState(false);
+  const [loadingTicket, setLoadingTicket] = useState<boolean>(false);
   const [ticket, setTicket] = useState<[any] | null>(null);
 
   const createTicketDisplay = (ticket: any) => {
@@ -70,7 +70,7 @@ function Wallet() {
         }
         setLoadingTicket(false);
       })
-      .catch((err : Error) => {
+      .catch((err: Error) => {
         console.log(err);
         setLoadingTicket(false);
       });
@@ -79,15 +79,15 @@ function Wallet() {
   /**
    * Filter the ticket which contract address is the same as the contract address in .env
    */
-     let validTickets = [];
-     if (!loadingTicket && ticket) {
-       validTickets = ticket.filter(
-         (t) =>
-           t.contract.address.toLowerCase() ===
-           process.env.NEXT_PUBLIC_CONTRACT_ID?.toLowerCase()
-       );
-     }
-     console.log(validTickets);
+  let validTickets = [];
+  if (!loadingTicket && ticket) {
+    validTickets = ticket.filter(
+      (t) =>
+        t.contract.address.toLowerCase() ===
+        process.env.NEXT_PUBLIC_CONTRACT_ID?.toLowerCase()
+    );
+  }
+  console.log(validTickets);
   return (
     <>
       <Heading mb={2}>我的票券</Heading>
@@ -114,4 +114,3 @@ function Wallet() {
 }
 
 export default Wallet;
-

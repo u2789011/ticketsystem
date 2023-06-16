@@ -13,14 +13,15 @@ function CheckIn() {
     throw new Error("useContext undefined");
   }
   const { connectedContract } = context;
-  const { showSuccessToast, showSuccessToastWithReactNode, showErrorToast } = useCustomToast();
-  const [showScanner, setShowScanner] = useState(false);
+  const { showSuccessToast, showSuccessToastWithReactNode, showErrorToast } =
+    useCustomToast();
+  const [showScanner, setShowScanner] = useState<boolean>(false);
   // const [data, setData] = useState("No result");
   const [scannedAddress, setScannedAddress] = useState(null);
 
-  const [hasTicket, setHasTicket] = useState(false);
+  const [hasTicket, setHasTicket] = useState<boolean>(false);
 
-  const [checkInTxnPending, setCheckInTxnPending] = useState(false);
+  const [checkInTxnPending, setCheckInTxnPending] = useState<boolean>(false);
 
   const checkIn = async () => {
     try {
@@ -45,10 +46,7 @@ function CheckIn() {
     } catch (err) {
       console.log(err);
       setCheckInTxnPending(false);
-      showErrorToast(
-        "錯誤",
-        "CheckIn入場錯誤,請向工作人員尋求人工協助"
-      );
+      showErrorToast("錯誤", "CheckIn入場錯誤,請向工作人員尋求人工協助");
     }
   };
 
@@ -130,10 +128,7 @@ function CheckIn() {
               }}
               onError={(err: any) => {
                 console.log(err);
-                showErrorToast(
-                  "錯誤",
-                  "無法讀取 QR Code"
-                );
+                showErrorToast("錯誤", "無法讀取 QR Code");
                 setShowScanner(false);
               }}
               onScan={(data: any) => {

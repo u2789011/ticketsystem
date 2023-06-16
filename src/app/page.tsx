@@ -18,40 +18,52 @@ const Buy = () => {
   }
   console.log("BUY, context", context);
   const { connectedContract } = context;
-  const { showSuccessToastWithReactNode, showErrorToast, showWarningToast } = useCustomToast();
-  const [totalTicketCount, setTotalTicketCount] = useState<number | null | undefined>(null);
-  const [availableTicketCountA, setAvailableTicketCountA] = useState< number | null | undefined>(null);
-  const [availableTicketCountB, setAvailableTicketCountB] = useState< number | null | undefined>(null);
-  const [availableTicketCountC, setAvailableTicketCountC] = useState< number | null | undefined>(null);
+  const { showSuccessToastWithReactNode, showErrorToast, showWarningToast } =
+    useCustomToast();
+  const [totalTicketCount, setTotalTicketCount] = useState<
+    number | null | undefined
+  >(null);
+  const [availableTicketCountA, setAvailableTicketCountA] = useState<
+    number | null | undefined
+  >(null);
+  const [availableTicketCountB, setAvailableTicketCountB] = useState<
+    number | null | undefined
+  >(null);
+  const [availableTicketCountC, setAvailableTicketCountC] = useState<
+    number | null | undefined
+  >(null);
   const [currentOption, setCurrentOption] = useState<string | null>(null);
-  const [buyTxnPending, setBuyTxnPending] = useState(false);
-
+  const [buyTxnPending, setBuyTxnPending] = useState<boolean>(false);
 
   useEffect(() => {
     if (!connectedContract) return;
-  
+
     (async () => {
       const [availableA, availableB, availableC] = await Promise.all([
-        fetchAvailableTicketCount('A'),
-        fetchAvailableTicketCount('B'),
-        fetchAvailableTicketCount('C'),
+        fetchAvailableTicketCount("A"),
+        fetchAvailableTicketCount("B"),
+        fetchAvailableTicketCount("C"),
         getTotalTicketCount(),
       ]);
-  
+
       setAvailableTicketCountA(availableA);
       setAvailableTicketCountB(availableB);
       setAvailableTicketCountC(availableC);
     })();
-  
   }, [connectedContract]);
-  
-  const fetchAvailableTicketCount = async (ticketType : string) => {
+
+  const fetchAvailableTicketCount = async (ticketType: string) => {
     try {
-      const count = await connectedContract?.[`availableTickets${ticketType}`]();
+      const count = await connectedContract?.[
+        `availableTickets${ticketType}`
+      ]();
       if (typeof count === "bigint") {
         return Number(count);
       } else {
-        console.error(`Unexpected result from availableTickets${ticketType}: `, count);
+        console.error(
+          `Unexpected result from availableTickets${ticketType}: `,
+          count
+        );
       }
     } catch (err: any) {
       console.error(err);
@@ -118,8 +130,6 @@ const Buy = () => {
       setBuyTxnPending(false);
     }
   };
-
-
 
   return (
     <>

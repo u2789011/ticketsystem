@@ -11,9 +11,10 @@ const index = () => {
   }
   const { connectedContract, isOwner } = context;
   const { showSuccessToastWithReactNode, showErrorToast } = useCustomToast();
-  const [openSaleTxnPending, setOpenSaleTxnPending] = useState(false);
+  const [openSaleTxnPending, setOpenSaleTxnPending] = useState<boolean>(false);
 
-  const [closeSaleTxnPending, setCloseSaleTxnPending] = useState(false);
+  const [closeSaleTxnPending, setCloseSaleTxnPending] =
+    useState<boolean>(false);
 
   const closeSale = async () => {
     try {

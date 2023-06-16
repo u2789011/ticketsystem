@@ -88,10 +88,10 @@ export default function Home({ children }: Props) {
       getConnectedContract();
     };
 
-    ethereum.on("networkChanged", handleNetworkChange);
+    ethereum.on("chainChanged", handleNetworkChange);
 
     return () => {
-      ethereum.removeListener("networkChanged", handleNetworkChange);
+      ethereum.removeListener("chainChanged", handleNetworkChange);
     };
   }, [address, connectedContract]);
 

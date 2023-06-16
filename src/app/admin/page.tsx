@@ -1,6 +1,6 @@
 "use client";
 import { useState, useContext } from "react";
-import { Button, Flex, Heading, Text, useToast } from "@chakra-ui/react";
+import { Button, Flex, Heading, Text } from "@chakra-ui/react";
 import { HomeContext } from "../home";
 import useCustomToast from "../../../components/hooks/useCustomToast";
 

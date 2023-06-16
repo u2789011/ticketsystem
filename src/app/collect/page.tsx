@@ -18,11 +18,11 @@ function Collect() {
     showSuccessToastWithReactNode,
     showErrorToast,
   } = useCustomToast();
-  const [showScanner, setShowScanner] = useState(false);
+  const [showScanner, setShowScanner] = useState<boolean>(false);
   const [scannedAddress, setScannedAddress] = useState<string | null>(null);
-  const [hasTicket, setHasTicket] = useState(false);
-  const [checkInTxnPending1, setCheckInTxnPending1] = useState(false);
-  const [checkInTxnPending2, setCheckInTxnPending2] = useState(false);
+  const [hasTicket, setHasTicket] = useState<boolean>(false);
+  const [checkInTxnPending1, setCheckInTxnPending1] = useState<boolean>(false);
+  const [checkInTxnPending2, setCheckInTxnPending2] = useState<boolean>(false);
 
   /**
    * Trigger smart contract checkInStage1,2 function.

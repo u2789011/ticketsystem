@@ -241,9 +241,8 @@ export default function Home({ children }: Props) {
             alt="DevDAO logo"
             margin="36px auto 12px"
             width="15%"
+            height="15%"
           />
-          {/* show buy page */}
-          {/* <Buy connectedContract={connectedContract} /> */}
           {children}
         </Flex>
       </Page>

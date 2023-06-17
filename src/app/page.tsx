@@ -12,7 +12,7 @@ import { HomeContext } from "./home";
 import useCustomToast from "../../components/hooks/useCustomToast";
 
 import { useContractReads } from "wagmi";
-import nfTixBooth from "../../contracts/nfTixBooth.json";
+import { nfTixBooth } from "../../contracts/abis/nfTixBooth";
 
 const Buy = () => {
   const context = useContext(HomeContext);
@@ -42,26 +42,28 @@ const Buy = () => {
     contracts: [
       {
         address: process.env.NEXT_PUBLIC_CONTRACT_ID as `0x${string}`,
-        abi: nfTixBooth.abi,
+        abi: nfTixBooth,
         functionName: "availableTicketsA",
       },
       {
         address: process.env.NEXT_PUBLIC_CONTRACT_ID as `0x${string}`,
-        abi: nfTixBooth.abi,
+        abi: nfTixBooth,
         functionName: "availableTicketsB",
       },
       {
         address: process.env.NEXT_PUBLIC_CONTRACT_ID as `0x${string}`,
-        abi: nfTixBooth.abi,
+        abi: nfTixBooth,
         functionName: "availableTicketsC",
       },
       {
         address: process.env.NEXT_PUBLIC_CONTRACT_ID as `0x${string}`,
-        abi: nfTixBooth.abi,
+        abi: nfTixBooth,
         functionName: "TOTAL_TICKETS",
       },
     ],
   });
+
+  console.log(data);
 
   // const { data, isError, isLoading } = useContractRead({
   //   address: process.env.NEXT_PUBLIC_CONTRACT_ID as `0x${string}`,

@@ -55,6 +55,31 @@ export default function Home({ children }: Props) {
   const [errorMessage, setErrorMessage] = useState<string>("");
   console.log("errorMessage", errorMessage);
 
+  const getConnectedContract = async () => {
+    const { ethereum } = window;
+    if (!ethereum) return;
+
+    try {
+      const provider = new ethers.BrowserProvider(ethereum);
+      const signer = await provider.getSigner();
+      const connectedContract = new ethers.Contract(
+        process.env.NEXT_PUBLIC_CONTRACT_ID as string,
+        nfTixBooth.abi,
+        signer
+      );
+      setConnectedContract(connectedContract);
+    } catch (err: any) {
+      // Check if err is an Error object with a message property.
+      if (err instanceof Error && err.message) {
+        setErrorMessage(err.message);
+        console.log("setConnectedContract err.message", err.message);
+      } else {
+        // If not, use a generic error message.
+        setErrorMessage("An unknown error occurred.");
+      }
+    }
+  };
+
   useEffect(() => {
     getConnectedContract();
     console.log("getConnectedContract", connectedContract);
@@ -102,31 +127,6 @@ export default function Home({ children }: Props) {
   //     ethereum.removeListener("chainChanged", handleNetworkChange);
   //   };
   // }, [address, connectedContract]);
-
-  const getConnectedContract = async () => {
-    const { ethereum } = window;
-    if (!ethereum) return;
-
-    try {
-      const provider = new ethers.BrowserProvider(ethereum);
-      const signer = await provider.getSigner();
-      const connectedContract = new ethers.Contract(
-        process.env.NEXT_PUBLIC_CONTRACT_ID as string,
-        nfTixBooth.abi,
-        signer
-      );
-      setConnectedContract(connectedContract);
-    } catch (err: any) {
-      // Check if err is an Error object with a message property.
-      if (err instanceof Error && err.message) {
-        setErrorMessage(err.message);
-        console.log("setConnectedContract err.message", err.message);
-      } else {
-        // If not, use a generic error message.
-        setErrorMessage("An unknown error occurred.");
-      }
-    }
-  };
 
   return (
     <HomeContext.Provider value={{ address, isOwner, connectedContract }}>

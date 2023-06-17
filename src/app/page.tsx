@@ -11,6 +11,9 @@ import {
 import { HomeContext } from "./home";
 import useCustomToast from "../../components/hooks/useCustomToast";
 
+import { useContractReads } from "wagmi";
+import nfTixBooth from "../../contracts/nfTixBooth.json";
+
 const Buy = () => {
   const context = useContext(HomeContext);
   if (context === undefined) {
@@ -35,51 +38,85 @@ const Buy = () => {
   const [currentOption, setCurrentOption] = useState<string | null>(null);
   const [buyTxnPending, setBuyTxnPending] = useState<boolean>(false);
 
-  useEffect(() => {
-    if (!connectedContract) return;
+  const { data, isError, isLoading } = useContractReads({
+    contracts: [
+      {
+        address: process.env.NEXT_PUBLIC_CONTRACT_ID as `0x${string}`,
+        abi: nfTixBooth.abi,
+        functionName: "availableTicketsA",
+      },
+      {
+        address: process.env.NEXT_PUBLIC_CONTRACT_ID as `0x${string}`,
+        abi: nfTixBooth.abi,
+        functionName: "availableTicketsB",
+      },
+      {
+        address: process.env.NEXT_PUBLIC_CONTRACT_ID as `0x${string}`,
+        abi: nfTixBooth.abi,
+        functionName: "availableTicketsC",
+      },
+      {
+        address: process.env.NEXT_PUBLIC_CONTRACT_ID as `0x${string}`,
+        abi: nfTixBooth.abi,
+        functionName: "TOTAL_TICKETS",
+      },
+    ],
+  });
 
-    (async () => {
-      const [availableA, availableB, availableC] = await Promise.all([
-        fetchAvailableTicketCount("A"),
-        fetchAvailableTicketCount("B"),
-        fetchAvailableTicketCount("C"),
-        getTotalTicketCount(),
-      ]);
+  // const { data, isError, isLoading } = useContractRead({
+  //   address: process.env.NEXT_PUBLIC_CONTRACT_ID as `0x${string}`,
+  //   abi: nfTixBooth.abi,
+  //   functionName: `availableTicketsA`,
+  // });
+  // console.log("DATA:", Number(data));
 
-      setAvailableTicketCountA(availableA);
-      setAvailableTicketCountB(availableB);
-      setAvailableTicketCountC(availableC);
-    })();
-  }, [connectedContract]);
+  // useEffect(() => {
+  //   if (!connectedContract) return;
 
-  const fetchAvailableTicketCount = async (ticketType: string) => {
-    try {
-      const count = await connectedContract?.[
-        `availableTickets${ticketType}`
-      ]();
-      if (typeof count === "bigint") {
-        return Number(count);
-      } else {
-        console.error(
-          `Unexpected result from availableTickets${ticketType}: `,
-          count
-        );
-      }
-    } catch (err: any) {
-      console.error(err);
-      return null;
-    }
-  };
+  //   (async () => {
+  //     const [availableA, availableB, availableC] = await Promise.all([
+  //       fetchAvailableTicketCount("A"),
+  //       fetchAvailableTicketCount("B"),
+  //       fetchAvailableTicketCount("C"),
 
-  const getTotalTicketCount = async () => {
-    try {
-      const count = await connectedContract?.TOTAL_TICKETS();
-      console.log("connectedContract.TOTAL_TICKETS()", count);
-      setTotalTicketCount(Number(count));
-    } catch (err) {
-      console.log(err);
-    }
-  };
+  //       getTotalTicketCount(),
+  //     ]);
+
+  //     setAvailableTicketCountA(availableA);
+  //     setAvailableTicketCountB(availableB);
+  //     setAvailableTicketCountC(availableC);
+  //   })();
+
+  // }, [connectedContract]);
+
+  // const fetchAvailableTicketCount = async (ticketType: string) => {
+  //   try {
+  //     const count = await connectedContract?.[
+  //       `availableTickets${ticketType}`
+  //     ]();
+  //     if (typeof count === "bigint") {
+  //       return Number(count);
+  //     } else {
+  //       console.error(
+  //         `Unexpected result from availableTickets${ticketType}: `,
+  //         count
+  //       );
+  //     }
+  //   } catch (err: any) {
+  //     console.error(err);
+  //     return null;
+  //   }
+  // };
+
+  // const getTotalTicketCount = async () => {
+  //   try {
+  //     const count = await connectedContract?.TOTAL_TICKETS();
+  //     console.log("connectedContract.TOTAL_TICKETS()", count);
+  //     setTotalTicketCount(Number(count));
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // };
 
   const buyTicket = async () => {
     try {

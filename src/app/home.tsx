@@ -27,6 +27,7 @@ import {
   MenuDivider,
 } from "@chakra-ui/react";
 import { ChevronDownIcon, ChevronUpIcon } from "@chakra-ui/icons";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 
 type Props = {
   children: any;
@@ -72,15 +73,15 @@ export default function Home({ children }: Props) {
     checkIsContractOwner();
   }, [address, connectedContract]);
 
-  useEffect(() => {
-    if (!address) {
-      const previousAddress = window.localStorage.getItem("nftix-address");
+  // useEffect(() => {
+  //   if (!address) {
+  //     const previousAddress = window.localStorage.getItem("nftix-address");
 
-      if (previousAddress) {
-        setAddress(previousAddress);
-      }
-    }
-  }, [address]);
+  //     if (previousAddress) {
+  //       setAddress(previousAddress);
+  //     }
+  //   }
+  // }, [address]);
 
   useEffect(() => {
     const { ethereum } = window;
@@ -127,7 +128,7 @@ export default function Home({ children }: Props) {
 
   return (
     <HomeContext.Provider value={{ address, isOwner, connectedContract }}>
-      <Connect
+      {/* <Connect
         address={address}
         onConnect={(address) => {
           setAddress(address);
@@ -139,7 +140,16 @@ export default function Home({ children }: Props) {
 
           window.localStorage.removeItem("nftix-address");
         }}
-      />
+      /> */}
+      <Flex
+        fontWeight="bold"
+        position="absolute"
+        top="8px"
+        right="8px"
+        zIndex="10"
+      >
+        <ConnectButton />
+      </Flex>
       <Page>
         <Menu>
           {({ isOpen }) => (

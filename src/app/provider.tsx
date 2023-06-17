@@ -6,7 +6,11 @@ import { ChakraProvider } from "@chakra-ui/react";
 
 // Rainbow Kit and Wagmi Imports
 import "@rainbow-me/rainbowkit/styles.css";
-import { getDefaultWallets, RainbowKitProvider } from "@rainbow-me/rainbowkit";
+import {
+  getDefaultWallets,
+  lightTheme,
+  RainbowKitProvider,
+} from "@rainbow-me/rainbowkit";
 import { configureChains, createConfig, WagmiConfig } from "wagmi";
 import { polygon, polygonMumbai } from "wagmi/chains";
 import { alchemyProvider } from "wagmi/providers/alchemy";
@@ -38,7 +42,18 @@ export function Providers({ children }: { children: React.ReactNode }) {
     <CacheProvider>
       <ChakraProvider>
         <WagmiConfig config={wagmiConfig}>
-          <RainbowKitProvider chains={chains}>{children}</RainbowKitProvider>
+          <RainbowKitProvider
+            theme={lightTheme({
+              accentColor: "white",
+              accentColorForeground: "purple",
+              borderRadius: "large",
+              fontStack: "system",
+              overlayBlur: "small",
+            })}
+            chains={chains}
+          >
+            {children}
+          </RainbowKitProvider>
         </WagmiConfig>
       </ChakraProvider>
     </CacheProvider>

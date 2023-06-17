@@ -15,7 +15,6 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 import Page from "../../components/Layout";
-import Connect from "../../components/Connect";
 import {
   Button,
   Flex,
@@ -150,7 +149,7 @@ export default function Home({ children }: Props) {
         right="8px"
         zIndex="10"
       >
-        <ConnectButton />
+        <ConnectButton label="連結錢包"/>
       </Flex>
       <Page>
         <Menu>

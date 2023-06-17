@@ -28,6 +28,7 @@ import {
 } from "@chakra-ui/react";
 import { ChevronDownIcon, ChevronUpIcon } from "@chakra-ui/icons";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { useAccount } from "wagmi";
 
 type Props = {
   children: any;
@@ -41,7 +42,8 @@ type Context = {
 export const HomeContext = createContext<Context | undefined>(undefined);
 
 export default function Home({ children }: Props) {
-  const [address, setAddress] = useState<string | null | undefined>(null);
+  // const [address, setAddress] = useState<string | null | undefined>(null);
+  const { address } = useAccount();
   console.log("address:", address);
 
   const [isOwner, setIsOwner] = useState(false);
@@ -52,6 +54,11 @@ export default function Home({ children }: Props) {
 
   const [errorMessage, setErrorMessage] = useState<string>("");
   console.log("errorMessage", errorMessage);
+
+  useEffect(() => {
+    getConnectedContract();
+    console.log("getConnectedContract", connectedContract);
+  }, []);
 
   useEffect(() => {
     const checkIsContractOwner = async () => {
@@ -83,18 +90,18 @@ export default function Home({ children }: Props) {
   //   }
   // }, [address]);
 
-  useEffect(() => {
-    const { ethereum } = window;
-    const handleNetworkChange = () => {
-      getConnectedContract();
-    };
+  // useEffect(() => {
+  //   const { ethereum } = window;
+  //   const handleNetworkChange = () => {
+  //     getConnectedContract();
+  //   };
 
-    ethereum.on("chainChanged", handleNetworkChange);
+  //   ethereum.on("chainChanged", handleNetworkChange);
 
-    return () => {
-      ethereum.removeListener("chainChanged", handleNetworkChange);
-    };
-  }, [address, connectedContract]);
+  //   return () => {
+  //     ethereum.removeListener("chainChanged", handleNetworkChange);
+  //   };
+  // }, [address, connectedContract]);
 
   const getConnectedContract = async () => {
     const { ethereum } = window;
@@ -120,11 +127,6 @@ export default function Home({ children }: Props) {
       }
     }
   };
-
-  useEffect(() => {
-    getConnectedContract();
-    console.log("getConnectedContract", connectedContract);
-  }, []);
 
   return (
     <HomeContext.Provider value={{ address, isOwner, connectedContract }}>

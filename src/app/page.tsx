@@ -23,23 +23,32 @@ const Buy = () => {
   const { connectedContract } = context;
   const { showSuccessToastWithReactNode, showErrorToast, showWarningToast } =
     useCustomToast();
-  const [totalTicketCount, setTotalTicketCount] = useState<
-    number | null | undefined
-  >(null);
-  const [availableTicketCountA, setAvailableTicketCountA] = useState<
-    number | null | undefined
-  >(null);
-  const [availableTicketCountB, setAvailableTicketCountB] = useState<
-    number | null | undefined
-  >(null);
-  const [availableTicketCountC, setAvailableTicketCountC] = useState<
-    number | null | undefined
-  >(null);
+  // const [totalTicketCount, setTotalTicketCount] = useState<
+  //   number | null | undefined
+  // >(null);
+  // const [availableTicketCountA, setAvailableTicketCountA] = useState<
+  //   number | null | undefined
+  // >(null);
+  // const [availableTicketCountB, setAvailableTicketCountB] = useState<
+  //   number | null | undefined
+  // >(null);
+  // const [availableTicketCountC, setAvailableTicketCountC] = useState<
+  //   number | null | undefined
+  // >(null);
   const [currentOption, setCurrentOption] = useState<string | null>(null);
   const [buyTxnPending, setBuyTxnPending] = useState<boolean>(false);
 
-  const { data, isError, isLoading } = useContractReads({
+  const {
+    data: availableTickets,
+    isError,
+    isLoading,
+  } = useContractReads({
     contracts: [
+      {
+        address: process.env.NEXT_PUBLIC_CONTRACT_ID as `0x${string}`,
+        abi: nfTixBooth,
+        functionName: "TOTAL_TICKETS",
+      },
       {
         address: process.env.NEXT_PUBLIC_CONTRACT_ID as `0x${string}`,
         abi: nfTixBooth,
@@ -55,15 +64,10 @@ const Buy = () => {
         abi: nfTixBooth,
         functionName: "availableTicketsC",
       },
-      {
-        address: process.env.NEXT_PUBLIC_CONTRACT_ID as `0x${string}`,
-        abi: nfTixBooth,
-        functionName: "TOTAL_TICKETS",
-      },
     ],
   });
 
-  console.log(data);
+  console.log(availableTickets);
 
   // const { data, isError, isLoading } = useContractRead({
   //   address: process.env.NEXT_PUBLIC_CONTRACT_ID as `0x${string}`,
@@ -206,7 +210,7 @@ const Buy = () => {
             購買票券
           </Button>
         </ButtonGroup>
-        {totalTicketCount && (
+        {/* {totalTicketCount && (
           <Text>
             總共 {totalTicketCount} 張票
             <br />
@@ -215,6 +219,17 @@ const Buy = () => {
             B區還剩 {availableTicketCountB} 張！
             <br />
             C區還剩 {availableTicketCountC} 張！
+          </Text>
+        )} */}
+        {availableTickets && (
+          <Text>
+            總共 {Number(availableTickets[0].result)} 張票
+            <br />
+            A區還剩 {Number(availableTickets[1].result)} 張！
+            <br />
+            B區還剩 {Number(availableTickets[2].result)} 張！
+            <br />
+            C區還剩 {Number(availableTickets[3].result)} 張！
           </Text>
         )}
       </Flex>

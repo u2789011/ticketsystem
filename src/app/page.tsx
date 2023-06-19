@@ -7,6 +7,7 @@ import {
   Text,
   Flex,
   Select,
+  CircularProgress,
 } from "@chakra-ui/react";
 import { HomeContext } from "./home";
 import useCustomToast from "../../components/hooks/useCustomToast";
@@ -34,8 +35,8 @@ const Buy = () => {
   // Wagmi contract reads for available tickets
   const {
     data: availableTickets,
-    isError,
-    isLoading,
+    isError: isErrorAvailableTickets,
+    isLoading: isLoadingAvailableTickets,
   } = useContractReads({
     contracts: [
       {
@@ -171,7 +172,7 @@ const Buy = () => {
             購買票券
           </Button>
         </ButtonGroup>
-        {mounted && availableTickets && (
+        {mounted && availableTickets && !availableTickets[0].error ? (
           <Text>
             總共 {Number(availableTickets[0].result)} 張票
             <br />
@@ -181,6 +182,16 @@ const Buy = () => {
             <br />
             C區還剩 {Number(availableTickets[3].result)} 張！
           </Text>
+        ) : (
+          <></>
+        )}
+        {mounted && isLoadingAvailableTickets && (
+          <CircularProgress
+            capIsRound
+            isIndeterminate
+            color="green.300"
+            size="120px"
+          />
         )}
       </Flex>
     </>

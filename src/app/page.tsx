@@ -13,6 +13,7 @@ import useCustomToast from "../../components/hooks/useCustomToast";
 
 import { useContractReads } from "wagmi";
 import { nfTixBooth } from "../../contracts/abis/nfTixBooth";
+import { usePrepareContractWrite, useContractWrite } from "wagmi";
 
 const Buy = () => {
   const context = useContext(HomeContext);
@@ -124,6 +125,32 @@ const Buy = () => {
   //   }
   // };
 
+  // Configure Buy Ticket Writes
+  const { config: configBuyA, error: errorBuyA } = usePrepareContractWrite({
+    address: process.env.NEXT_PUBLIC_CONTRACT_ID as `0x${string}`,
+    abi: nfTixBooth,
+    functionName: "mintA",
+    value: BigInt(`${0.001 * 10 ** 18}`),
+  });
+
+  const { config: configBuyB, error: errorBuyB } = usePrepareContractWrite({
+    address: process.env.NEXT_PUBLIC_CONTRACT_ID as `0x${string}`,
+    abi: nfTixBooth,
+    functionName: "mintB",
+    value: BigInt(`${0.002 * 10 ** 18}`),
+  });
+
+  const { config: configBuyC, error: errorBuyC } = usePrepareContractWrite({
+    address: process.env.NEXT_PUBLIC_CONTRACT_ID as `0x${string}`,
+    abi: nfTixBooth,
+    functionName: "mintC",
+    value: BigInt(`${0.003 * 10 ** 18}`),
+  });
+
+  const { data: dataA, write: buyA } = useContractWrite(configBuyA);
+  const { data: dataB, write: buyB } = useContractWrite(configBuyB);
+  const { data: dataC, write: buyC } = useContractWrite(configBuyC);
+
   const buyTicket = async () => {
     try {
       if (!connectedContract) return;
@@ -131,27 +158,32 @@ const Buy = () => {
       setBuyTxnPending(true);
       let buyTxn;
       if (currentOption === "option1") {
-        buyTxn = await connectedContract.mintA({
-          value: `${0.001 * 10 ** 18}`,
-        });
+        // buyTxn = await connectedContract.mintA({
+        //   value: `${0.001 * 10 ** 18}`,
+        // });
+        buyA?.();
+        buyTxn = dataA?.hash;
       } else if (currentOption === "option2") {
-        buyTxn = await connectedContract.mintB({
-          value: `${0.002 * 10 ** 18}`,
-        });
+        // buyTxn = await connectedContract.mintB({
+        //   value: `${0.002 * 10 ** 18}`,
+        // });
+        buyB?.();
+        buyTxn = dataB?.hash;
       } else if (currentOption === "option3") {
-        buyTxn = await connectedContract.mintC({
-          value: `${0.003 * 10 ** 18}`,
-        });
+        // buyTxn = await connectedContract.mintC({
+        //   value: `${0.003 * 10 ** 18}`,
+        // });
+        buyC?.();
+        buyTxn = dataC?.hash;
       } else {
         throw new Error("Invalid option");
       }
 
-      await buyTxn.wait();
       setBuyTxnPending(false);
       showSuccessToastWithReactNode(
         "成功",
         <a
-          href={`https://mumbai.polygonscan.com/tx/${buyTxn.hash}`}
+          href={`https://mumbai.polygonscan.com/tx/${buyTxn}`}
           target="_blank"
           rel="nofollow noreferrer"
         >

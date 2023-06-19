@@ -10,19 +10,12 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { useEffect, useState, useContext } from "react";
-import { HomeContext } from "../home";
 import { useAccount } from "wagmi";
 
 // @ts-ignore
 import axios from "axios";
 
 function Wallet() {
-  // const context = useContext(HomeContext);
-  // if (context === undefined) {
-  //   throw new Error("useContext undefined");
-  // }
-  // const { address } = context;
-
   const { address } = useAccount();
   const [loadingTicket, setLoadingTicket] = useState<boolean>(true);
   const [ticket, setTicket] = useState<[any] | null>(null);

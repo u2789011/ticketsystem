@@ -110,6 +110,7 @@ const Buy = () => {
       }
 
       setBuyTxnPending(false);
+
       showSuccessToastWithReactNode(
         "成功",
         <a

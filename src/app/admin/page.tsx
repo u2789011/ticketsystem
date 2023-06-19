@@ -15,10 +15,11 @@ const index = () => {
   // const [openSaleTxnPending, setOpenSaleTxnPending] = useState<boolean>(false);
   // const [closeSaleTxnPending, setCloseSaleTxnPending] =useState<boolean>(false);
   const [isOwner, setIsOwner] = useState<boolean>(false);
+  const [saleIsActive, setsaleIsActive] = useState<boolean>(false);
 
   const { address } = useAccount();
 
-  const { data } = useContractRead({
+  const { data: owner } = useContractRead({
     address: `${process.env.NEXT_PUBLIC_CONTRACT_ID}` as `0x${string}`,
     abi: nfTixBooth,
     functionName: "owner",
@@ -26,6 +27,16 @@ const index = () => {
       setIsOwner((data as unknown) === address);
     },
   });
+
+  const { data: saleStatus } = useContractRead({
+    address: `${process.env.NEXT_PUBLIC_CONTRACT_ID}` as `0x${string}`,
+    abi: nfTixBooth,
+    functionName: "saleIsActive",
+    onSuccess: (data) => {
+      setsaleIsActive((data as unknown) === true);
+    },
+  });
+  console.log("saleIsActive", saleIsActive);
 
   const { config: openSaleCOnfig } = usePrepareContractWrite({
     address: `${process.env.NEXT_PUBLIC_CONTRACT_ID}` as `0x${string}`,
@@ -56,6 +67,10 @@ const index = () => {
     },
     onError(error, variables, context) {
       console.log("onError", error, variables, context);
+      showErrorToast(
+        "Failure",
+        error?.message ?? "Something went wrong, please try again later."
+      );
     },
   });
 
@@ -77,6 +92,10 @@ const index = () => {
       },
       onError(error, variables, context) {
         console.log("onError", error, variables, context);
+        showErrorToast(
+          "Failure",
+          error?.message ?? "Something went wrong, please try again later."
+        );
       },
     }
   );
@@ -146,12 +165,15 @@ const index = () => {
       <Text fontSize="xl" mb={8}>
         操作智能合約開啟或關閉販售
       </Text>
+      <Text fontSize="xl" mb={8}>
+        當前門票銷售狀態：{saleIsActive ? "開啟" : "關閉"}
+      </Text>
       <Flex width="100%" justifyContent="center">
         <Button
           disabled={!openSale}
           onClick={() => openSale?.()}
           isLoading={openSaleTxnPending}
-          isDisabled={!isOwner || closeSaleTxnPending}
+          isDisabled={!isOwner || closeSaleTxnPending || saleIsActive}
           size="lg"
           colorScheme="teal"
         >

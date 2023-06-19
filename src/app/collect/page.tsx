@@ -213,9 +213,9 @@ function Collect() {
       <Heading mb={4}>Collect</Heading>
       {!showScanner && scannedAddress && hasTicket && (
         <>
-          {!isCheckedIn1 && !isCheckedIn2 ? (
+          {isCheckedIn1 && isCheckedIn2 ? (
             <Text fontSize="xl" mb={8}>
-              此錢包蒐集闖關完成!
+              此錢包蒐集闖關已完成!
             </Text>
           ) : (
             <Text fontSize="xl" mb={8}>

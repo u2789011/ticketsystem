@@ -1,18 +1,24 @@
 "use client";
 
 import { Box, Button, Flex, Heading, Text } from "@chakra-ui/react";
-import { useEffect, useState, useContext } from "react";
-import { HomeContext } from "../home";
+import { useState } from "react";
+// import { HomeContext } from "../home";
 import useCustomToast from "../../../components/hooks/useCustomToast";
 // @ts-ignore
 import QrReader from "react-qr-scanner";
+import {
+  useContractRead,
+  useContractWrite,
+  usePrepareContractWrite,
+} from "wagmi";
+import { nfTixBooth } from "../../../contracts/abis/nfTixBooth";
 
 function CheckIn() {
-  const context = useContext(HomeContext);
-  if (context === undefined) {
-    throw new Error("useContext undefined");
-  }
-  const { connectedContract } = context;
+  // const context = useContext(HomeContext);
+  // if (context === undefined) {
+  //   throw new Error("useContext undefined");
+  // }
+  // const { connectedContract } = context;
   const { showSuccessToast, showSuccessToastWithReactNode, showErrorToast } =
     useCustomToast();
   const [showScanner, setShowScanner] = useState<boolean>(false);
@@ -21,55 +27,112 @@ function CheckIn() {
 
   const [hasTicket, setHasTicket] = useState<boolean>(false);
 
-  const [checkInTxnPending, setCheckInTxnPending] = useState<boolean>(false);
+  // const [checkInTxnPending, setCheckInTxnPending] = useState<boolean>(false);
 
-  const checkIn = async () => {
-    try {
-      if (!connectedContract) return;
+  const balanceOf = useContractRead({
+    address: `${process.env.NEXT_PUBLIC_CONTRACT_ID}` as `0x${string}`,
+    abi: nfTixBooth,
+    functionName: "balanceOf",
+    args: [scannedAddress],
+    enabled: scannedAddress ? true : false,
+    onSuccess: (data) => {
+      Number(data) > 0 ? setHasTicket(true) : setHasTicket(false);
+    },
+  });
 
-      setCheckInTxnPending(true);
-      const checkInTxn = await connectedContract.checkIn(scannedAddress);
+  const { data } = useContractRead({
+    address: `${process.env.NEXT_PUBLIC_CONTRACT_ID}` as `0x${string}`,
+    abi: nfTixBooth,
+    functionName: "balanceOf",
+    args: [scannedAddress],
+    enabled: scannedAddress ? true : false,
+    onSuccess: (data) => {
+      Number(data) > 0 ? setHasTicket(true) : setHasTicket(false);
+    },
+  });
 
-      await checkInTxn.wait();
-      setCheckInTxnPending(false);
+  const { config: checkInConfig } = usePrepareContractWrite({
+    address: `${process.env.NEXT_PUBLIC_CONTRACT_ID}` as `0x${string}`,
+    abi: nfTixBooth,
+    functionName: "checkIn",
+    enabled: scannedAddress ? true : false,
+    args: [scannedAddress],
+  });
 
+  const { write: checkIn, isLoading: checkInTxnPending } = useContractWrite({
+    ...checkInConfig,
+    onSuccess(data, variables, context) {
+      console.log("onSuccess", data, variables, context);
       showSuccessToastWithReactNode(
-        "成功",
+        "Sale is Opened!",
         <a
-          href={`https://mumbai.polygonscan.com/tx/${checkInTxn.hash}`}
+          href={`https://mumbai.polygonscan.com/tx/${data.hash}`}
           target="_blank"
           rel="nofollow noreferrer"
         >
           在區塊鏈瀏覽器確認交易！
         </a>
       );
-    } catch (err) {
-      console.log(err);
-      setCheckInTxnPending(false);
-      showErrorToast("錯誤", "CheckIn入場錯誤,請向工作人員尋求人工協助");
-    }
-  };
+    },
+    onError(error, variables, context) {
+      console.log("onError", error, variables, context);
+      showErrorToast(
+        "Failure",
+        error?.message ?? "Something went wrong, please try again later."
+      );
+    },
+  });
 
-  useEffect(() => {
-    const confirmOwnership = async () => {
-      try {
-        console.log(connectedContract);
-        if (!connectedContract) return;
+  // const checkIn = async () => {
+  //   try {
+  //     if (!connectedContract) return;
 
-        const res = await connectedContract.balanceOf(scannedAddress);
-        console.log(res > 0);
-        if (res > 0) setHasTicket(true);
+  //     setCheckInTxnPending(true);
+  //     const checkInTxn = await connectedContract.checkIn(scannedAddress);
 
-        console.log(res);
-      } catch (error) {
-        console.log(error);
-      }
-    };
+  //     await checkInTxn.wait();
+  //     setCheckInTxnPending(false);
 
-    if (scannedAddress) {
-      confirmOwnership();
-    }
-  }, [connectedContract, scannedAddress]);
+  //     showSuccessToastWithReactNode(
+  //       "成功",
+  //       <a
+  //         href={`https://mumbai.polygonscan.com/tx/${checkInTxn.hash}`}
+  //         target="_blank"
+  //         rel="nofollow noreferrer"
+  //       >
+  //         在區塊鏈瀏覽器確認交易！
+  //       </a>
+  //     );
+  //   } catch (err) {
+  //     console.log(err);
+  //     setCheckInTxnPending(false);
+  //     showErrorToast("錯誤", "CheckIn入場錯誤,請向工作人員尋求人工協助");
+  //   }
+  // };
+
+  // useEffect(() => {
+  // const confirmOwnership = async () => {
+  //   try {
+  //     console.log(connectedContract);
+  //     if (!connectedContract) return;
+
+  //     const res = await connectedContract.balanceOf(scannedAddress);
+  //     console.log(res > 0);
+  //     if (res > 0) setHasTicket(true);
+
+  //     console.log(res);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
+
+  // if (scannedAddress) {
+  //   confirmOwnership();
+  // }
+  // refetchBalanceData();
+  // refetchWriteParam();
+
+  // }, [scannedAddress]);
 
   return (
     <>
@@ -81,7 +144,7 @@ function CheckIn() {
           </Text>
           <Flex width="100%" justifyContent="center">
             <Button
-              onClick={checkIn}
+              onClick={() => checkIn?.()}
               isLoading={checkInTxnPending}
               size="lg"
               colorScheme="teal"

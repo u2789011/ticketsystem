@@ -25,10 +25,14 @@ function Collect() {
     showErrorToast,
   } = useCustomToast();
   const [showScanner, setShowScanner] = useState<boolean>(false);
-  const [scannedAddress, setScannedAddress] = useState<string | null>(null);
-  const [hasTicket, setHasTicket] = useState<boolean>(false);
-  const [checkInTxnPending1, setCheckInTxnPending1] = useState<boolean>(false);
-  const [checkInTxnPending2, setCheckInTxnPending2] = useState<boolean>(false);
+  const [scannedAddress, setScannedAddress] = useState<
+    string | null | undefined
+  >("");
+  // const [hasTicket, setHasTicket] = useState<boolean>(false);
+  // const [checkInTxnPending1, setCheckInTxnPending1] = useState<boolean>(false);
+  // const [checkInTxnPending2, setCheckInTxnPending2] = useState<boolean>(false);
+
+  let hasTicket = false;
 
   const {
     data: balanceData,
@@ -39,11 +43,11 @@ function Collect() {
     abi: nfTixBooth,
     functionName: "balanceOf",
     args: [scannedAddress],
+    enabled: scannedAddress ? true : false,
   });
-
   console.log(balanceData);
   if (Number(balanceData) > 0) {
-    setHasTicket(true);
+    hasTicket = true;
   }
 
   const { config: configCheckIn1, error: errorCheckIn1 } =
@@ -52,6 +56,7 @@ function Collect() {
       abi: nfTixBooth,
       functionName: "checkInStage1",
       args: [scannedAddress],
+      enabled: scannedAddress ? true : false,
     });
 
   const { config: configCheckIn2, error: errorCheckIn2 } =
@@ -60,6 +65,7 @@ function Collect() {
       abi: nfTixBooth,
       functionName: "checkInStage2",
       args: [scannedAddress],
+      enabled: scannedAddress ? true : false,
     });
 
   const {
@@ -250,6 +256,7 @@ function Collect() {
                 console.log(address);
                 setScannedAddress(address);
                 setShowScanner(false);
+                // setIsEnabled(true);
                 showSuccessToast(
                   "掃描成功!",
                   `${address.slice(0, 6)}

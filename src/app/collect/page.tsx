@@ -34,11 +34,7 @@ function Collect() {
 
   let hasTicket = false;
 
-  const {
-    data: balanceData,
-    isError,
-    isLoading,
-  } = useContractRead({
+  const { data: balanceData } = useContractRead({
     address: process.env.NEXT_PUBLIC_CONTRACT_ID as `0x${string}`,
     abi: nfTixBooth,
     functionName: "balanceOf",
@@ -50,13 +46,46 @@ function Collect() {
     hasTicket = true;
   }
 
+  const { data: tokenId } = useContractRead({
+    address: process.env.NEXT_PUBLIC_CONTRACT_ID as `0x${string}`,
+    abi: nfTixBooth,
+    functionName: "tokenOfOwnerByIndex",
+    args: [scannedAddress, 0],
+    enabled: scannedAddress && hasTicket ? true : false,
+  });
+  console.log(Number(tokenId));
+
+  const { data: isCheckedIn1 } = useContractRead({
+    address: process.env.NEXT_PUBLIC_CONTRACT_ID as `0x${string}`,
+    abi: nfTixBooth,
+    functionName: "checkedInStage1",
+    args: [Number(tokenId)],
+    enabled:
+      scannedAddress && hasTicket && (tokenId || Number(tokenId) === 0)
+        ? true
+        : false,
+  });
+
+  const { data: isCheckedIn2 } = useContractRead({
+    address: process.env.NEXT_PUBLIC_CONTRACT_ID as `0x${string}`,
+    abi: nfTixBooth,
+    functionName: "checkedInStage2",
+    args: [Number(tokenId)],
+    enabled:
+      scannedAddress && hasTicket && (tokenId || Number(tokenId) === 0)
+        ? true
+        : false,
+  });
+
+  console.log(isCheckedIn1, isCheckedIn2);
+
   const { config: configCheckIn1, error: errorCheckIn1 } =
     usePrepareContractWrite({
       address: process.env.NEXT_PUBLIC_CONTRACT_ID as `0x${string}`,
       abi: nfTixBooth,
       functionName: "checkInStage1",
       args: [scannedAddress],
-      enabled: scannedAddress ? true : false,
+      enabled: scannedAddress && !isCheckedIn1 ? true : false,
     });
 
   const { config: configCheckIn2, error: errorCheckIn2 } =
@@ -65,7 +94,7 @@ function Collect() {
       abi: nfTixBooth,
       functionName: "checkInStage2",
       args: [scannedAddress],
-      enabled: scannedAddress ? true : false,
+      enabled: scannedAddress && !isCheckedIn2 ? true : false,
     });
 
   const {
@@ -184,27 +213,38 @@ function Collect() {
       <Heading mb={4}>Collect</Heading>
       {!showScanner && scannedAddress && hasTicket && (
         <>
-          <Text fontSize="xl" mb={8}>
-            此錢包可進行蒐集闖關!
-          </Text>
+          {!isCheckedIn1 && !isCheckedIn2 ? (
+            <Text fontSize="xl" mb={8}>
+              此錢包蒐集闖關完成!
+            </Text>
+          ) : (
+            <Text fontSize="xl" mb={8}>
+              此錢包可進行蒐集闖關!
+            </Text>
+          )}
           <Flex width="100%" justifyContent="center">
-            <Button
-              onClick={() => writeCheckIn1?.()}
-              isLoading={isLoadingCheckIn1}
-              size="lg"
-              colorScheme="teal"
-            >
-              Collect1
-            </Button>
+            {!isCheckedIn1 && (
+              <Button
+                onClick={() => writeCheckIn1?.()}
+                isLoading={isLoadingCheckIn1}
+                size="lg"
+                colorScheme="teal"
+              >
+                Collect1
+              </Button>
+            )}
+
             <Divider orientation="vertical" />
-            <Button
-              onClick={() => writeCheckIn2?.()}
-              isLoading={isLoadingCheckIn2}
-              size="lg"
-              colorScheme="teal"
-            >
-              Collect2
-            </Button>
+            {!isCheckedIn2 && (
+              <Button
+                onClick={() => writeCheckIn2?.()}
+                isLoading={isLoadingCheckIn2}
+                size="lg"
+                colorScheme="teal"
+              >
+                Collect2
+              </Button>
+            )}
           </Flex>
         </>
       )}

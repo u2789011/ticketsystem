@@ -40,14 +40,25 @@ function CheckIn() {
     },
   });
 
-  const { data } = useContractRead({
+  const { data: tokenOfOwnerByIndex } = useContractRead({
     address: `${process.env.NEXT_PUBLIC_CONTRACT_ID}` as `0x${string}`,
     abi: nfTixBooth,
-    functionName: "balanceOf",
-    args: [scannedAddress],
+    functionName: "tokenOfOwnerByIndex",
+    args: [scannedAddress, "0"],
     enabled: scannedAddress ? true : false,
     onSuccess: (data) => {
-      Number(data) > 0 ? setHasTicket(true) : setHasTicket(false);
+      console.log("tokenOfOwnerByIndex", data);
+    },
+  });
+
+  const { data: isCheckedIn } = useContractRead({
+    address: `${process.env.NEXT_PUBLIC_CONTRACT_ID}` as `0x${string}`,
+    abi: nfTixBooth,
+    functionName: "isCheckedIn",
+    args: [Number(tokenOfOwnerByIndex)],
+    enabled: scannedAddress ? true : false,
+    onSuccess: (data) => {
+      console.log("isCheckIn", data);
     },
   });
 
@@ -55,7 +66,7 @@ function CheckIn() {
     address: `${process.env.NEXT_PUBLIC_CONTRACT_ID}` as `0x${string}`,
     abi: nfTixBooth,
     functionName: "checkIn",
-    enabled: scannedAddress ? true : false,
+    enabled: scannedAddress&& !isCheckedIn ? true : false,
     args: [scannedAddress],
   });
 
@@ -139,19 +150,46 @@ function CheckIn() {
       <Heading mb={4}>Check In</Heading>
       {!showScanner && scannedAddress && hasTicket && (
         <>
-          <Text fontSize="xl" mb={8}>
-            此錢包擁有票券可入場!
-          </Text>
-          <Flex width="100%" justifyContent="center">
-            <Button
-              onClick={() => checkIn?.()}
-              isLoading={checkInTxnPending}
-              size="lg"
-              colorScheme="teal"
-            >
-              Check In
-            </Button>
-          </Flex>
+          {isCheckedIn ? (
+            <>
+              <Text fontSize="xl" mb={8}>
+                此票券已經入場!
+              </Text>
+              <Flex
+                width="100%"
+                justifyContent="center"
+                margin="16px auto 8px auto"
+              >
+                <Button
+                  onClick={() => {
+                    setShowScanner(false);
+                    setScannedAddress(null);
+                    setHasTicket(false);
+                  }}
+                  size="lg"
+                  colorScheme="red"
+                >
+                  Cancel
+                </Button>
+              </Flex>
+            </>
+          ) : (
+            <>
+              <Text fontSize="xl" mb={8}>
+                此錢包擁有票券可入場!
+              </Text>
+              <Flex width="100%" justifyContent="center">
+                <Button
+                  onClick={() => checkIn?.()}
+                  isLoading={checkInTxnPending}
+                  size="lg"
+                  colorScheme="teal"
+                >
+                  Check In
+                </Button>
+              </Flex>
+            </>
+          )}
         </>
       )}
       {!showScanner && (

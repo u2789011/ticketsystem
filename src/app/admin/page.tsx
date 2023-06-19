@@ -1,79 +1,144 @@
 "use client";
-import { useState, useContext } from "react";
+import { useState } from "react";
 import { Button, Flex, Heading, Text } from "@chakra-ui/react";
-import { HomeContext } from "../home";
 import useCustomToast from "../../../components/hooks/useCustomToast";
+import { nfTixBooth } from "../../../contracts/abis/nfTixBooth";
+import {
+  useContractRead,
+  useContractWrite,
+  usePrepareContractWrite,
+  useAccount,
+} from "wagmi";
 
 const index = () => {
-  const context = useContext(HomeContext);
-  if (context === undefined) {
-    throw new Error("useContext undefined");
-  }
-  const { connectedContract, isOwner } = context;
   const { showSuccessToastWithReactNode, showErrorToast } = useCustomToast();
-  const [openSaleTxnPending, setOpenSaleTxnPending] = useState<boolean>(false);
+  // const [openSaleTxnPending, setOpenSaleTxnPending] = useState<boolean>(false);
+  // const [closeSaleTxnPending, setCloseSaleTxnPending] =useState<boolean>(false);
+  const [isOwner, setIsOwner] = useState<boolean>(false);
 
-  const [closeSaleTxnPending, setCloseSaleTxnPending] =
-    useState<boolean>(false);
+  const { address } = useAccount();
 
-  const closeSale = async () => {
-    try {
-      if (!connectedContract) return;
+  const { data } = useContractRead({
+    address: `${process.env.NEXT_PUBLIC_CONTRACT_ID}` as `0x${string}`,
+    abi: nfTixBooth,
+    functionName: "owner",
+    onSuccess: (data) => {
+      setIsOwner((data as unknown) === address);
+    },
+  });
 
-      setCloseSaleTxnPending(true);
-      let closeSaleTxn = await connectedContract.closeSale();
+  const { config: openSaleCOnfig } = usePrepareContractWrite({
+    address: `${process.env.NEXT_PUBLIC_CONTRACT_ID}` as `0x${string}`,
+    abi: nfTixBooth,
+    functionName: "openSale",
+  });
 
-      await closeSaleTxn.wait();
-      setCloseSaleTxnPending(false);
+  const { config: closeSaleConfig } = usePrepareContractWrite({
+    address: `${process.env.NEXT_PUBLIC_CONTRACT_ID}` as `0x${string}`,
+    abi: nfTixBooth,
+    functionName: "closeSale",
+  });
 
+  const { write: openSale, isLoading: openSaleTxnPending } = useContractWrite({
+    ...openSaleCOnfig,
+    onSuccess(data, variables, context) {
+      console.log("onSuccess", data, variables, context);
       showSuccessToastWithReactNode(
-        "Sale is closed!",
+        "Sale is Opened!",
         <a
-          href={`https://mumbai.polygonscan.com/tx/${closeSaleTxn.hash}`}
+          href={`https://mumbai.polygonscan.com/tx/${data.hash}`}
           target="_blank"
           rel="nofollow noreferrer"
         >
           在區塊鏈瀏覽器確認交易！
         </a>
       );
-    } catch (err) {
-      console.log(err);
-      setCloseSaleTxnPending(true);
-      showErrorToast(
-        "Failure",
-        err?.toString() || "An unknown error occurred."
-      );
+    },
+    onError(error, variables, context) {
+      console.log("onError", error, variables, context);
+    },
+  });
+
+  const { write: closeSale, isLoading: closeSaleTxnPending } = useContractWrite(
+    {
+      ...closeSaleConfig,
+      onSuccess(data, variables, context) {
+        console.log("onSuccess", data, variables, context);
+        showSuccessToastWithReactNode(
+          "Sale is Closed!",
+          <a
+            href={`https://mumbai.polygonscan.com/tx/${data.hash}`}
+            target="_blank"
+            rel="nofollow noreferrer"
+          >
+            在區塊鏈瀏覽器確認交易！
+          </a>
+        );
+      },
+      onError(error, variables, context) {
+        console.log("onError", error, variables, context);
+      },
     }
-  };
+  );
 
-  const openSale = async () => {
-    try {
-      if (!connectedContract) return;
+  // const closeSale = async () => {
+  //   try {
+  //     if (!connectedContract) return;
 
-      setOpenSaleTxnPending(true);
-      let openSaleTxn = await connectedContract.openSale();
+  //     setCloseSaleTxnPending(true);
+  //     let closeSaleTxn = await connectedContract.closeSale();
 
-      await openSaleTxn.wait();
-      setOpenSaleTxnPending(false);
-      showSuccessToastWithReactNode(
-        "Sale is closed!",
-        <a
-          href={`https://mumbai.polygonscan.com/tx/${openSaleTxn.hash}`}
-          target="_blank"
-          rel="nofollow noreferrer"
-        >
-          在區塊鏈瀏覽器確認交易！
-        </a>
-      );
-    } catch (err) {
-      console.log(err);
-      setOpenSaleTxnPending(false);
-      showErrorToast(
-        "Failure",
-        err?.toString() || "An unknown error occurred."
-      );
-    }
-  };
+  //     await closeSaleTxn.wait();
+  //     setCloseSaleTxnPending(false);
+
+  //     showSuccessToastWithReactNode(
+  //       "Sale is closed!",
+  //       <a
+  //         href={`https://mumbai.polygonscan.com/tx/${closeSaleTxn.hash}`}
+  //         target="_blank"
+  //         rel="nofollow noreferrer"
+  //       >
+  //         在區塊鏈瀏覽器確認交易！
+  //       </a>
+  //     );
+  //   } catch (err) {
+  //     console.log(err);
+  //     setCloseSaleTxnPending(true);
+  //     showErrorToast(
+  //       "Failure",
+  //       err?.toString() || "An unknown error occurred."
+  //     );
+  //   }
+  // };
+
+  // const openSale = async () => {
+  //   try {
+  //     if (!connectedContract) return;
+
+  //     setOpenSaleTxnPending(true);
+  //     let openSaleTxn = await connectedContract.openSale();
+
+  //     await openSaleTxn.wait();
+  //     setOpenSaleTxnPending(false);
+  //     showSuccessToastWithReactNode(
+  //       "Sale is closed!",
+  //       <a
+  //         href={`https://mumbai.polygonscan.com/tx/${openSaleTxn.hash}`}
+  //         target="_blank"
+  //         rel="nofollow noreferrer"
+  //       >
+  //         在區塊鏈瀏覽器確認交易！
+  //       </a>
+  //     );
+  //   } catch (err) {
+  //     console.log(err);
+  //     setOpenSaleTxnPending(false);
+  //     showErrorToast(
+  //       "Failure",
+  //       err?.toString() || "An unknown error occurred."
+  //     );
+  //   }
+  // };
 
   return (
     <>
@@ -83,8 +148,9 @@ const index = () => {
       </Text>
       <Flex width="100%" justifyContent="center">
         <Button
+          disabled={!openSale}
+          onClick={() => openSale?.()}
           isLoading={openSaleTxnPending}
-          onClick={openSale}
           isDisabled={!isOwner || closeSaleTxnPending}
           size="lg"
           colorScheme="teal"
@@ -92,7 +158,8 @@ const index = () => {
           開始販售
         </Button>
         <Button
-          onClick={closeSale}
+          disabled={!closeSale}
+          onClick={() => closeSale?.()}
           isLoading={closeSaleTxnPending}
           isDisabled={!isOwner || openSaleTxnPending}
           size="lg"

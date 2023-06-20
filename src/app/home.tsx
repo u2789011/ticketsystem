@@ -39,6 +39,7 @@ export default function Home({ children }: Props) {
     address: process.env.NEXT_PUBLIC_CONTRACT_ID as `0x${string}`,
     abi: nfTixBooth,
     functionName: "owner",
+    enabled: address ? true : false,
   });
 
   let isOwner = address === owner;

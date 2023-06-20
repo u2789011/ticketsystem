@@ -22,8 +22,12 @@ import {
 import { useIsMounted } from "./hooks/useIsMounted";
 
 const Buy = () => {
-  const { showSuccessToastWithReactNode, showErrorToast, showWarningToast } =
-    useCustomToast();
+  const {
+    showSuccessToastWithReactNode,
+    showErrorToast,
+    showWarningToast,
+    showSuccessToast,
+  } = useCustomToast();
   const [currentOption, setCurrentOption] = useState<string | null>(null);
   const [buyTxnPending, setBuyTxnPending] = useState<boolean>(false);
 
@@ -105,16 +109,19 @@ const Buy = () => {
     data: dataA,
     write: buyA,
     isError: buyAError,
+    isSuccess: buyASuccess,
   } = useContractWrite(configBuyA);
   const {
     data: dataB,
     write: buyB,
     isError: buyBError,
+    isSuccess: buyBSuccess,
   } = useContractWrite(configBuyB);
   const {
     data: dataC,
     write: buyC,
     isError: buyCError,
+    isSuccess: buyCSuccess,
   } = useContractWrite(configBuyC);
 
   const buyTicket = async () => {
@@ -226,6 +233,11 @@ const Buy = () => {
         {mounted && !saleIsActive && currentAddress && (
           <Text mt="10" textAlign="center" width="200px" fontWeight="bold">
             尚未開放本場活動購票
+          </Text>
+        )}
+        {mounted && saleIsActive && currentAddress && balanceOfData && (
+          <Text mt="10" textAlign="center" width="200px" fontWeight="bold">
+            已經購買購票卷
           </Text>
         )}
       </Flex>

@@ -209,7 +209,7 @@ const Buy = () => {
             size="120px"
           />
         )}
-        {!saleIsActive && (
+        {!saleIsActive && currentAddress && (
           <Text mt="10" textAlign="center" width="200px" fontWeight="bold">
             尚未開放本場活動購票
           </Text>

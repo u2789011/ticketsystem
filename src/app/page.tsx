@@ -84,7 +84,7 @@ const Buy = () => {
     abi: nfTixBooth,
     functionName: "mintA",
     value: BigInt(`${0.001 * 10 ** 18}`),
-    enabled: !balanceOfData && saleIsActive ? true : false,
+    enabled: !balanceOfData ? true : false,
   });
 
   const { config: configBuyB } = usePrepareContractWrite({
@@ -92,7 +92,7 @@ const Buy = () => {
     abi: nfTixBooth,
     functionName: "mintB",
     value: BigInt(`${0.002 * 10 ** 18}`),
-    enabled: !balanceOfData && saleIsActive ? true : false,
+    enabled: !balanceOfData ? true : false,
   });
 
   const { config: configBuyC } = usePrepareContractWrite({
@@ -100,7 +100,7 @@ const Buy = () => {
     abi: nfTixBooth,
     functionName: "mintC",
     value: BigInt(`${0.003 * 10 ** 18}`),
-    enabled: !balanceOfData && saleIsActive ? true : false,
+    enabled: !balanceOfData ? true : false,
   });
 
   const { data: dataA, write: buyA } = useContractWrite(configBuyA);
@@ -209,7 +209,7 @@ const Buy = () => {
             size="120px"
           />
         )}
-        {!saleIsActive && currentAddress && (
+        {mounted && !saleIsActive && currentAddress && (
           <Text mt="10" textAlign="center" width="200px" fontWeight="bold">
             尚未開放本場活動購票
           </Text>

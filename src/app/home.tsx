@@ -42,8 +42,8 @@ export default function Home({ children }: Props) {
     enabled: address ? true : false,
   });
 
-  let isOwner = address === owner;
-  console.log(isOwner);
+  let isOwner = address === owner && address;
+  console.log("isowner", isOwner);
 
   const [errorMessage, setErrorMessage] = useState<string>("");
   console.log("errorMessage", errorMessage);
@@ -90,7 +90,7 @@ export default function Home({ children }: Props) {
                 </MenuItem>
                 <MenuDivider />
                 <MenuItem isDisabled={!address}>
-                  <Link href="/wallet">
+                  {!address ? (
                     <Flex
                       alignItems="center"
                       flexDirection="row"
@@ -100,11 +100,23 @@ export default function Home({ children }: Props) {
                       我的票券
                       <FontAwesomeIcon icon={faTicketAlt} size="lg" />
                     </Flex>
-                  </Link>
+                  ) : (
+                    <Link href="/wallet">
+                      <Flex
+                        alignItems="center"
+                        flexDirection="row"
+                        width="100%"
+                        justifyContent="space-between"
+                      >
+                        我的票券
+                        <FontAwesomeIcon icon={faTicketAlt} size="lg" />
+                      </Flex>
+                    </Link>
+                  )}
                 </MenuItem>
                 <MenuDivider />
                 <MenuItem isDisabled={!isOwner}>
-                  <Link href="/checkin">
+                  {!isOwner ? (
                     <Flex
                       alignItems="center"
                       flexDirection="row"
@@ -114,11 +126,23 @@ export default function Home({ children }: Props) {
                       入場掃描
                       <FontAwesomeIcon icon={faQrcode} size="lg" />
                     </Flex>
-                  </Link>
+                  ) : (
+                    <Link href="/checkin">
+                      <Flex
+                        alignItems="center"
+                        flexDirection="row"
+                        width="100%"
+                        justifyContent="space-between"
+                      >
+                        入場掃描
+                        <FontAwesomeIcon icon={faQrcode} size="lg" />
+                      </Flex>
+                    </Link>
+                  )}
                 </MenuItem>
                 <MenuDivider />
-                <MenuItem isDisabled={false}>
-                  <Link href="/collect">
+                <MenuItem isDisabled={!isOwner}>
+                  {!isOwner ? (
                     <Flex
                       alignItems="center"
                       flexDirection="row"
@@ -128,11 +152,23 @@ export default function Home({ children }: Props) {
                       蒐集掃描
                       <FontAwesomeIcon icon={faWallet} size="lg" />
                     </Flex>
-                  </Link>
+                  ) : (
+                    <Link href="/collect">
+                      <Flex
+                        alignItems="center"
+                        flexDirection="row"
+                        width="100%"
+                        justifyContent="space-between"
+                      >
+                        蒐集掃描
+                        <FontAwesomeIcon icon={faWallet} size="lg" />
+                      </Flex>
+                    </Link>
+                  )}
                 </MenuItem>
                 <MenuDivider />
                 <MenuItem isDisabled={!isOwner}>
-                  <Link href="admin">
+                  {!isOwner ? (
                     <Flex
                       alignItems="center"
                       flexDirection="row"
@@ -142,7 +178,19 @@ export default function Home({ children }: Props) {
                       設定
                       <FontAwesomeIcon icon={faTools} size="lg" />
                     </Flex>
-                  </Link>
+                  ) : (
+                    <Link href="admin">
+                      <Flex
+                        alignItems="center"
+                        flexDirection="row"
+                        width="100%"
+                        justifyContent="space-between"
+                      >
+                        設定
+                        <FontAwesomeIcon icon={faTools} size="lg" />
+                      </Flex>
+                    </Link>
+                  )}
                 </MenuItem>
               </MenuList>
             </>

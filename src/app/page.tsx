@@ -42,6 +42,7 @@ const Buy = () => {
     functionName: "balanceOf",
     args: [currentAddress],
     enabled: currentAddress ? true : false,
+    watch: true,
   });
 
   // Check if sale is open

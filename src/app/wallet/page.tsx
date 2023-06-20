@@ -9,7 +9,7 @@ import {
   Link,
   Text,
 } from "@chakra-ui/react";
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 
 // @ts-ignore

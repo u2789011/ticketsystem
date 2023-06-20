@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState, useContext } from "react";
+import { useState } from "react";
 import {
   Button,
   ButtonGroup,
@@ -71,7 +71,7 @@ const Buy = () => {
   });
 
   // Configure Buy Ticket Writes
-  const { config: configBuyA, error: errorBuyA } = usePrepareContractWrite({
+  const { config: configBuyA } = usePrepareContractWrite({
     address: process.env.NEXT_PUBLIC_CONTRACT_ID as `0x${string}`,
     abi: nfTixBooth,
     functionName: "mintA",
@@ -79,7 +79,7 @@ const Buy = () => {
     enabled: !balanceOfData ? true : false,
   });
 
-  const { config: configBuyB, error: errorBuyB } = usePrepareContractWrite({
+  const { config: configBuyB } = usePrepareContractWrite({
     address: process.env.NEXT_PUBLIC_CONTRACT_ID as `0x${string}`,
     abi: nfTixBooth,
     functionName: "mintB",
@@ -87,7 +87,7 @@ const Buy = () => {
     enabled: !balanceOfData ? true : false,
   });
 
-  const { config: configBuyC, error: errorBuyC } = usePrepareContractWrite({
+  const { config: configBuyC } = usePrepareContractWrite({
     address: process.env.NEXT_PUBLIC_CONTRACT_ID as `0x${string}`,
     abi: nfTixBooth,
     functionName: "mintC",

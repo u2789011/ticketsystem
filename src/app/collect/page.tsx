@@ -1,6 +1,6 @@
 "use client";
 import { Box, Button, Flex, Heading, Text, Divider } from "@chakra-ui/react";
-import { useEffect, useState, useContext, useCallback } from "react";
+import { useState } from "react";
 import useCustomToast from "../../../components/hooks/useCustomToast";
 // @ts-ignore
 import QrReader from "react-qr-scanner";
@@ -174,12 +174,10 @@ function Collect() {
               onScan={(data: any) => {
                 if (!data) return;
                 console.log("onScan", data);
-                // const address = data.text.split("ethereum:");
                 const address = data.text.substr(9, 42);
                 console.log(address);
                 setScannedAddress(address);
                 setShowScanner(false);
-                // setIsEnabled(true);
                 showSuccessToast(
                   "掃描成功!",
                   `${address.slice(0, 6)}

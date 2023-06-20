@@ -1,6 +1,5 @@
 "use client";
-import { useEffect, useState, createContext } from "react";
-import { Contract, ethers } from "ethers";
+import { useState } from "react";
 import Link from "next/link";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";

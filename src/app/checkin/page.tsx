@@ -12,22 +12,16 @@ import {
   usePrepareContractWrite,
 } from "wagmi";
 import { nfTixBooth } from "../../../contracts/abis/nfTixBooth";
+import { useIsMounted } from "../hooks/useIsMounted";
 
 function CheckIn() {
-  // const context = useContext(HomeContext);
-  // if (context === undefined) {
-  //   throw new Error("useContext undefined");
-  // }
-  // const { connectedContract } = context;
   const { showSuccessToast, showSuccessToastWithReactNode, showErrorToast } =
     useCustomToast();
   const [showScanner, setShowScanner] = useState<boolean>(false);
-  // const [data, setData] = useState("No result");
   const [scannedAddress, setScannedAddress] = useState(null);
-
   const [hasTicket, setHasTicket] = useState<boolean>(false);
 
-  // const [checkInTxnPending, setCheckInTxnPending] = useState<boolean>(false);
+  const mounted = useIsMounted();
 
   const balanceOf = useContractRead({
     address: `${process.env.NEXT_PUBLIC_CONTRACT_ID}` as `0x${string}`,
@@ -66,7 +60,7 @@ function CheckIn() {
     address: `${process.env.NEXT_PUBLIC_CONTRACT_ID}` as `0x${string}`,
     abi: nfTixBooth,
     functionName: "checkIn",
-    enabled: scannedAddress&& !isCheckedIn ? true : false,
+    enabled: scannedAddress && !isCheckedIn ? true : false,
     args: [scannedAddress],
   });
 
@@ -93,57 +87,6 @@ function CheckIn() {
       );
     },
   });
-
-  // const checkIn = async () => {
-  //   try {
-  //     if (!connectedContract) return;
-
-  //     setCheckInTxnPending(true);
-  //     const checkInTxn = await connectedContract.checkIn(scannedAddress);
-
-  //     await checkInTxn.wait();
-  //     setCheckInTxnPending(false);
-
-  //     showSuccessToastWithReactNode(
-  //       "成功",
-  //       <a
-  //         href={`https://mumbai.polygonscan.com/tx/${checkInTxn.hash}`}
-  //         target="_blank"
-  //         rel="nofollow noreferrer"
-  //       >
-  //         在區塊鏈瀏覽器確認交易！
-  //       </a>
-  //     );
-  //   } catch (err) {
-  //     console.log(err);
-  //     setCheckInTxnPending(false);
-  //     showErrorToast("錯誤", "CheckIn入場錯誤,請向工作人員尋求人工協助");
-  //   }
-  // };
-
-  // useEffect(() => {
-  // const confirmOwnership = async () => {
-  //   try {
-  //     console.log(connectedContract);
-  //     if (!connectedContract) return;
-
-  //     const res = await connectedContract.balanceOf(scannedAddress);
-  //     console.log(res > 0);
-  //     if (res > 0) setHasTicket(true);
-
-  //     console.log(res);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-
-  // if (scannedAddress) {
-  //   confirmOwnership();
-  // }
-  // refetchBalanceData();
-  // refetchWriteParam();
-
-  // }, [scannedAddress]);
 
   return (
     <>
@@ -180,7 +123,7 @@ function CheckIn() {
               </Text>
               <Flex width="100%" justifyContent="center">
                 <Button
-                  onClick={() => checkIn?.()}
+                  onClick={mounted ? () => checkIn?.() : undefined}
                   isLoading={checkInTxnPending}
                   size="lg"
                   colorScheme="teal"

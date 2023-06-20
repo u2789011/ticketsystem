@@ -27,12 +27,15 @@ import { ChevronDownIcon, ChevronUpIcon } from "@chakra-ui/icons";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useAccount, useContractRead } from "wagmi";
 import { nfTixBooth } from "../../contracts/abis/nfTixBooth";
+import { useIsMounted } from "./hooks/useIsMounted";
 
 type Props = {
   children: any;
 };
 
 export default function Home({ children }: Props) {
+  const mounted = useIsMounted();
+
   const { address } = useAccount();
   console.log("address:", address);
 
@@ -90,8 +93,8 @@ export default function Home({ children }: Props) {
                   </Link>
                 </MenuItem>
                 <MenuDivider />
-                <MenuItem isDisabled={!address}>
-                  {!address ? (
+                <MenuItem isDisabled={mounted && !address}>
+                  {mounted && !address ? (
                     <Flex
                       alignItems="center"
                       flexDirection="row"
@@ -116,8 +119,8 @@ export default function Home({ children }: Props) {
                   )}
                 </MenuItem>
                 <MenuDivider />
-                <MenuItem isDisabled={!isOwner}>
-                  {!isOwner ? (
+                <MenuItem isDisabled={mounted && !isOwner}>
+                  {mounted && !isOwner ? (
                     <Flex
                       alignItems="center"
                       flexDirection="row"
@@ -142,8 +145,8 @@ export default function Home({ children }: Props) {
                   )}
                 </MenuItem>
                 <MenuDivider />
-                <MenuItem isDisabled={!isOwner}>
-                  {!isOwner ? (
+                <MenuItem isDisabled={mounted && !isOwner}>
+                  {mounted && !isOwner ? (
                     <Flex
                       alignItems="center"
                       flexDirection="row"
@@ -168,8 +171,8 @@ export default function Home({ children }: Props) {
                   )}
                 </MenuItem>
                 <MenuDivider />
-                <MenuItem isDisabled={!isOwner}>
-                  {!isOwner ? (
+                <MenuItem isDisabled={mounted && !isOwner}>
+                  {mounted && !isOwner ? (
                     <Flex
                       alignItems="center"
                       flexDirection="row"
@@ -194,7 +197,7 @@ export default function Home({ children }: Props) {
                   )}
                 </MenuItem>
                 <MenuDivider />
-                <MenuItem >
+                <MenuItem>
                   <Link href="refund">
                     <Flex
                       alignItems="center"

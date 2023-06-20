@@ -9,6 +9,7 @@ import {
   usePrepareContractWrite,
   useAccount,
 } from "wagmi";
+import { useIsMounted } from "../hooks/useIsMounted";
 
 const index = () => {
   const { showSuccessToastWithReactNode, showErrorToast } = useCustomToast();
@@ -16,6 +17,7 @@ const index = () => {
   // const [closeSaleTxnPending, setCloseSaleTxnPending] =useState<boolean>(false);
   const [isOwner, setIsOwner] = useState<boolean>(false);
   const [saleIsActive, setsaleIsActive] = useState<boolean>(false);
+  const mounted = useIsMounted();
 
   const { address } = useAccount();
 
@@ -171,7 +173,7 @@ const index = () => {
       <Flex width="100%" justifyContent="center">
         <Button
           disabled={!openSale}
-          onClick={() => openSale?.()}
+          onClick={mounted ? () => openSale?.() : undefined}
           isLoading={openSaleTxnPending}
           isDisabled={!isOwner || closeSaleTxnPending || saleIsActive}
           size="lg"
@@ -181,7 +183,7 @@ const index = () => {
         </Button>
         <Button
           disabled={!closeSale}
-          onClick={() => closeSale?.()}
+          onClick={mounted ? () => closeSale?.() : undefined}
           isLoading={closeSaleTxnPending}
           isDisabled={!isOwner || openSaleTxnPending}
           size="lg"

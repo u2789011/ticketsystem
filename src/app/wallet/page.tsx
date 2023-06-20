@@ -11,6 +11,7 @@ import {
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
+import { useIsMounted } from "../hooks/useIsMounted";
 
 // @ts-ignore
 import axios from "axios";
@@ -19,6 +20,7 @@ function Wallet() {
   const { address } = useAccount();
   const [loadingTicket, setLoadingTicket] = useState<boolean>(true);
   const [ticket, setTicket] = useState<[any] | null>(null);
+  const mounted = useIsMounted();
 
   const createTicketDisplay = (ticket: any) => {
     // const pinataURI = "https://gateway.pinata.cloud/ipfs/";
@@ -45,7 +47,9 @@ function Wallet() {
 
   // Alchemy URL
   const baseURL = `https://polygon-mumbai.g.alchemy.com/nft/v2/${process.env.NEXT_PUBLIC_ALCHEMY_API_KEY}/getNFTs`;
-  const url = `${baseURL}?contractAddress=${process.env.NEXT_PUBLIC_CONTRACT_ID}&owner=${address}`;
+  const url = mounted
+    ? `${baseURL}?contractAddress=${process.env.NEXT_PUBLIC_CONTRACT_ID}&owner=${address}`
+    : "";
   const config = {
     method: "get",
     url: url,

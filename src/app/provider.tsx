@@ -51,6 +51,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
               overlayBlur: "small",
             })}
             chains={chains}
+            initialChain={polygonMumbai}
           >
             {children}
           </RainbowKitProvider>

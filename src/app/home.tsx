@@ -9,6 +9,7 @@ import {
   faTools,
   faTicketAlt,
   faWallet,
+  faCircleInfo,
 } from "@fortawesome/free-solid-svg-icons";
 
 import Page from "../../components/Layout";
@@ -191,6 +192,20 @@ export default function Home({ children }: Props) {
                       </Flex>
                     </Link>
                   )}
+                </MenuItem>
+                <MenuDivider />
+                <MenuItem >
+                  <Link href="refund">
+                    <Flex
+                      alignItems="center"
+                      flexDirection="row"
+                      width="100%"
+                      justifyContent="space-between"
+                    >
+                      票務說明
+                      <FontAwesomeIcon icon={faCircleInfo} size="lg" />
+                    </Flex>
+                  </Link>
                 </MenuItem>
               </MenuList>
             </>

@@ -40,6 +40,14 @@ const Buy = () => {
     enabled: currentAddress ? true : false,
   });
 
+  // Check if sale is open
+  const { data: saleIsActive } = useContractRead({
+    address: process.env.NEXT_PUBLIC_CONTRACT_ID as `0x${string}`,
+    abi: nfTixBooth,
+    functionName: "saleIsActive",
+    enabled: currentAddress ? true : false,
+  });
+
   // Wagmi contract reads for available tickets
   const {
     data: availableTickets,
@@ -76,7 +84,7 @@ const Buy = () => {
     abi: nfTixBooth,
     functionName: "mintA",
     value: BigInt(`${0.001 * 10 ** 18}`),
-    enabled: !balanceOfData ? true : false,
+    enabled: !balanceOfData && saleIsActive ? true : false,
   });
 
   const { config: configBuyB } = usePrepareContractWrite({
@@ -84,7 +92,7 @@ const Buy = () => {
     abi: nfTixBooth,
     functionName: "mintB",
     value: BigInt(`${0.002 * 10 ** 18}`),
-    enabled: !balanceOfData ? true : false,
+    enabled: !balanceOfData && saleIsActive ? true : false,
   });
 
   const { config: configBuyC } = usePrepareContractWrite({
@@ -92,7 +100,7 @@ const Buy = () => {
     abi: nfTixBooth,
     functionName: "mintC",
     value: BigInt(`${0.003 * 10 ** 18}`),
-    enabled: !balanceOfData ? true : false,
+    enabled: !balanceOfData && saleIsActive ? true : false,
   });
 
   const { data: dataA, write: buyA } = useContractWrite(configBuyA);
@@ -200,6 +208,11 @@ const Buy = () => {
             color="green.300"
             size="120px"
           />
+        )}
+        {!saleIsActive && (
+          <Text mt="10" textAlign="center" width="200px" fontWeight="bold">
+            尚未開放本場活動購票
+          </Text>
         )}
       </Flex>
     </>

@@ -47,9 +47,7 @@ function Wallet() {
 
   // Alchemy URL
   const baseURL = `https://polygon-mumbai.g.alchemy.com/nft/v2/${process.env.NEXT_PUBLIC_ALCHEMY_API_KEY}/getNFTs`;
-  const url = mounted
-    ? `${baseURL}?contractAddress=${process.env.NEXT_PUBLIC_CONTRACT_ID}&owner=${address}`
-    : "";
+  const url = `${baseURL}?contractAddress=${process.env.NEXT_PUBLIC_CONTRACT_ID}&owner=${address}`;
   const config = {
     method: "get",
     url: url,

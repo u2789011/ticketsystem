@@ -3,8 +3,6 @@ import { useEffect, useState, createContext } from "react";
 import { Contract, ethers } from "ethers";
 import Link from "next/link";
 
-import nfTixBooth from "../../contracts/nfTixBooth.json";
-
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEthereum } from "@fortawesome/free-brands-svg-icons";
 import {
@@ -27,121 +25,31 @@ import {
 } from "@chakra-ui/react";
 import { ChevronDownIcon, ChevronUpIcon } from "@chakra-ui/icons";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { useAccount } from "wagmi";
+import { useAccount, useContractRead } from "wagmi";
+import { nfTixBooth } from "../../contracts/abis/nfTixBooth";
 
 type Props = {
   children: any;
 };
 
-type Context = {
-  address: string | null | undefined;
-  isOwner: boolean;
-  connectedContract: Contract | null;
-};
-export const HomeContext = createContext<Context | undefined>(undefined);
-
 export default function Home({ children }: Props) {
-  // const [address, setAddress] = useState<string | null | undefined>(null);
   const { address } = useAccount();
   console.log("address:", address);
 
-  const [isOwner, setIsOwner] = useState(false);
-  console.log("isOwner", isOwner);
+  const { data: owner } = useContractRead({
+    address: process.env.NEXT_PUBLIC_CONTRACT_ID as `0x${string}`,
+    abi: nfTixBooth,
+    functionName: "owner",
+  });
 
-  const [connectedContract, setConnectedContract] = useState<any>(null);
-  console.log("connectedContract", connectedContract);
+  let isOwner = address === owner;
+  console.log(isOwner);
 
   const [errorMessage, setErrorMessage] = useState<string>("");
   console.log("errorMessage", errorMessage);
 
-  const getConnectedContract = async () => {
-    const { ethereum } = window;
-    if (!ethereum) return;
-
-    try {
-      const provider = new ethers.BrowserProvider(ethereum);
-      const signer = await provider.getSigner();
-      const connectedContract = new ethers.Contract(
-        process.env.NEXT_PUBLIC_CONTRACT_ID as string,
-        nfTixBooth.abi,
-        signer
-      );
-      setConnectedContract(connectedContract);
-    } catch (err: any) {
-      // Check if err is an Error object with a message property.
-      if (err instanceof Error && err.message) {
-        setErrorMessage(err.message);
-        console.log("setConnectedContract err.message", err.message);
-      } else {
-        // If not, use a generic error message.
-        setErrorMessage("An unknown error occurred.");
-      }
-    }
-  };
-
-  useEffect(() => {
-    getConnectedContract();
-    console.log("getConnectedContract", connectedContract);
-  }, []);
-
-  useEffect(() => {
-    const checkIsContractOwner = async () => {
-      if (!address || !connectedContract) return;
-
-      try {
-        const ownerAddress = await connectedContract.owner();
-        setIsOwner(address.toLowerCase() === ownerAddress.toLowerCase());
-      } catch (err: any) {
-        // Check if err is an Error object with a message property.
-        if (err instanceof Error && err.message) {
-          setErrorMessage(err.message);
-        } else {
-          // If not, use a generic error message.
-          setErrorMessage("An unknown error occurred.");
-        }
-      }
-    };
-    checkIsContractOwner();
-  }, [address, connectedContract]);
-
-  // useEffect(() => {
-  //   if (!address) {
-  //     const previousAddress = window.localStorage.getItem("nftix-address");
-
-  //     if (previousAddress) {
-  //       setAddress(previousAddress);
-  //     }
-  //   }
-  // }, [address]);
-
-  // useEffect(() => {
-  //   const { ethereum } = window;
-  //   const handleNetworkChange = () => {
-  //     getConnectedContract();
-  //   };
-
-  //   ethereum.on("chainChanged", handleNetworkChange);
-
-  //   return () => {
-  //     ethereum.removeListener("chainChanged", handleNetworkChange);
-  //   };
-  // }, [address, connectedContract]);
-
   return (
-    <HomeContext.Provider value={{ address, isOwner, connectedContract }}>
-      {/* <Connect
-        address={address}
-        onConnect={(address) => {
-          setAddress(address);
-
-          window.localStorage.setItem("nftix-address", address);
-        }}
-        onDisconnect={() => {
-          setAddress(null);
-
-          window.localStorage.removeItem("nftix-address");
-        }}
-      /> */}
+    <>
       <Flex
         fontWeight="bold"
         position="absolute"
@@ -149,7 +57,7 @@ export default function Home({ children }: Props) {
         right="8px"
         zIndex="10"
       >
-        <ConnectButton label="連結錢包"/>
+        <ConnectButton label="連結錢包" />
       </Flex>
       <Page>
         <Menu>
@@ -262,6 +170,6 @@ export default function Home({ children }: Props) {
           <p>{errorMessage}</p>
         </Flex>
       )}
-    </HomeContext.Provider>
+    </>
   );
 }

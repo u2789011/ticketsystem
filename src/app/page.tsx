@@ -9,7 +9,6 @@ import {
   Select,
   CircularProgress,
 } from "@chakra-ui/react";
-import { HomeContext } from "./home";
 import useCustomToast from "../../components/hooks/useCustomToast";
 
 import { useContractReads } from "wagmi";
@@ -40,8 +39,6 @@ const Buy = () => {
     args: [currentAddress],
     enabled: currentAddress ? true : false,
   });
-
-  console.log("BALANCE OF", balanceOfData);
 
   // Wagmi contract reads for available tickets
   const {

@@ -14,16 +14,15 @@ import useCustomToast from "../../components/hooks/useCustomToast";
 
 import { useContractReads } from "wagmi";
 import { nfTixBooth } from "../../contracts/abis/nfTixBooth";
-import { usePrepareContractWrite, useContractWrite } from "wagmi";
+import {
+  usePrepareContractWrite,
+  useContractWrite,
+  useContractRead,
+  useAccount,
+} from "wagmi";
 import { useIsMounted } from "./hooks/useIsMounted";
 
 const Buy = () => {
-  const context = useContext(HomeContext);
-  if (context === undefined) {
-    throw new Error("useContext undefined");
-  }
-  console.log("BUY, context", context);
-  const { connectedContract } = context;
   const { showSuccessToastWithReactNode, showErrorToast, showWarningToast } =
     useCustomToast();
   const [currentOption, setCurrentOption] = useState<string | null>(null);
@@ -31,6 +30,18 @@ const Buy = () => {
 
   // Check if mounted to deal with hydration error
   const mounted = useIsMounted();
+
+  // Check if user has already bought ticket
+  const { address: currentAddress } = useAccount();
+  const { data: balanceOfData } = useContractRead({
+    address: process.env.NEXT_PUBLIC_CONTRACT_ID as `0x${string}`,
+    abi: nfTixBooth,
+    functionName: "balanceOf",
+    args: [currentAddress],
+    enabled: currentAddress ? true : false,
+  });
+
+  console.log("BALANCE OF", balanceOfData);
 
   // Wagmi contract reads for available tickets
   const {
@@ -62,14 +73,13 @@ const Buy = () => {
     ],
   });
 
-  console.log(availableTickets);
-
   // Configure Buy Ticket Writes
   const { config: configBuyA, error: errorBuyA } = usePrepareContractWrite({
     address: process.env.NEXT_PUBLIC_CONTRACT_ID as `0x${string}`,
     abi: nfTixBooth,
     functionName: "mintA",
     value: BigInt(`${0.001 * 10 ** 18}`),
+    enabled: !balanceOfData ? true : false,
   });
 
   const { config: configBuyB, error: errorBuyB } = usePrepareContractWrite({
@@ -77,6 +87,7 @@ const Buy = () => {
     abi: nfTixBooth,
     functionName: "mintB",
     value: BigInt(`${0.002 * 10 ** 18}`),
+    enabled: !balanceOfData ? true : false,
   });
 
   const { config: configBuyC, error: errorBuyC } = usePrepareContractWrite({
@@ -84,6 +95,7 @@ const Buy = () => {
     abi: nfTixBooth,
     functionName: "mintC",
     value: BigInt(`${0.003 * 10 ** 18}`),
+    enabled: !balanceOfData ? true : false,
   });
 
   const { data: dataA, write: buyA } = useContractWrite(configBuyA);
@@ -92,8 +104,6 @@ const Buy = () => {
 
   const buyTicket = async () => {
     try {
-      if (!connectedContract) return;
-
       setBuyTxnPending(true);
       let buyTxn;
       if (currentOption === "option1") {

@@ -49,34 +49,32 @@ const Buy = () => {
   });
 
   // Wagmi contract reads for available tickets
-  const {
-    data: availableTickets,
-    isError: isErrorAvailableTickets,
-    isLoading: isLoadingAvailableTickets,
-  } = useContractReads({
-    contracts: [
-      {
-        address: process.env.NEXT_PUBLIC_CONTRACT_ID as `0x${string}`,
-        abi: nfTixBooth,
-        functionName: "TOTAL_TICKETS",
-      },
-      {
-        address: process.env.NEXT_PUBLIC_CONTRACT_ID as `0x${string}`,
-        abi: nfTixBooth,
-        functionName: "availableTicketsA",
-      },
-      {
-        address: process.env.NEXT_PUBLIC_CONTRACT_ID as `0x${string}`,
-        abi: nfTixBooth,
-        functionName: "availableTicketsB",
-      },
-      {
-        address: process.env.NEXT_PUBLIC_CONTRACT_ID as `0x${string}`,
-        abi: nfTixBooth,
-        functionName: "availableTicketsC",
-      },
-    ],
-  });
+  const { data: availableTickets, isLoading: isLoadingAvailableTickets } =
+    useContractReads({
+      contracts: [
+        {
+          address: process.env.NEXT_PUBLIC_CONTRACT_ID as `0x${string}`,
+          abi: nfTixBooth,
+          functionName: "TOTAL_TICKETS",
+        },
+        {
+          address: process.env.NEXT_PUBLIC_CONTRACT_ID as `0x${string}`,
+          abi: nfTixBooth,
+          functionName: "availableTicketsA",
+        },
+        {
+          address: process.env.NEXT_PUBLIC_CONTRACT_ID as `0x${string}`,
+          abi: nfTixBooth,
+          functionName: "availableTicketsB",
+        },
+        {
+          address: process.env.NEXT_PUBLIC_CONTRACT_ID as `0x${string}`,
+          abi: nfTixBooth,
+          functionName: "availableTicketsC",
+        },
+      ],
+      watch: true,
+    });
 
   // Configure Buy Ticket Writes
   const { config: configBuyA } = usePrepareContractWrite({
@@ -103,9 +101,21 @@ const Buy = () => {
     enabled: !balanceOfData ? true : false,
   });
 
-  const { data: dataA, write: buyA } = useContractWrite(configBuyA);
-  const { data: dataB, write: buyB } = useContractWrite(configBuyB);
-  const { data: dataC, write: buyC } = useContractWrite(configBuyC);
+  const {
+    data: dataA,
+    write: buyA,
+    isError: buyAError,
+  } = useContractWrite(configBuyA);
+  const {
+    data: dataB,
+    write: buyB,
+    isError: buyBError,
+  } = useContractWrite(configBuyB);
+  const {
+    data: dataC,
+    write: buyC,
+    isError: buyCError,
+  } = useContractWrite(configBuyC);
 
   const buyTicket = async () => {
     try {
@@ -125,6 +135,10 @@ const Buy = () => {
       }
 
       setBuyTxnPending(false);
+
+      // if(buyAError || buyBError || buyCError){
+      //   showErrorToast()
+      // }
 
       showSuccessToastWithReactNode(
         "成功",

@@ -22,6 +22,7 @@ import {
   MenuList,
   MenuItem,
   MenuDivider,
+  Hide,
 } from "@chakra-ui/react";
 import { ChevronDownIcon, ChevronUpIcon } from "@chakra-ui/icons";
 import { ConnectButton } from "@rainbow-me/rainbowkit";

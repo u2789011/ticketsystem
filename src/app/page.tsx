@@ -111,18 +111,21 @@ const Buy = () => {
     write: buyA,
     isError: buyAError,
     isSuccess: buyASuccess,
+    isLoading: buyALoading,
   } = useContractWrite(configBuyA);
   const {
     data: dataB,
     write: buyB,
     isError: buyBError,
     isSuccess: buyBSuccess,
+    isLoading: buyBLoading,
   } = useContractWrite(configBuyB);
   const {
     data: dataC,
     write: buyC,
     isError: buyCError,
     isSuccess: buyCSuccess,
+    isLoading: buyCLoading,
   } = useContractWrite(configBuyC);
 
   const buyTicket = async () => {
@@ -143,10 +146,6 @@ const Buy = () => {
       }
 
       setBuyTxnPending(false);
-
-      // if(buyAError || buyBError || buyCError){
-      //   showErrorToast()
-      // }
 
       showSuccessToastWithReactNode(
         "成功",
@@ -240,6 +239,17 @@ const Buy = () => {
           <Text mt="10" textAlign="center" width="200px" fontWeight="bold">
             已經購買購票卷
           </Text>
+        )}
+        {mounted && (buyALoading || buyBLoading || buyCLoading) && (
+          <>
+            <Text mt="5">可以到MetaMask按加速加快交易進行</Text>
+            <CircularProgress
+              capIsRound
+              isIndeterminate
+              color="green.300"
+              size="80px"
+            />
+          </>
         )}
       </Flex>
     </>

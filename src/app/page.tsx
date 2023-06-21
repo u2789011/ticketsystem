@@ -186,29 +186,34 @@ const Buy = () => {
         margin="0 auto"
         maxW="140px"
       >
-        <ButtonGroup mb={4} size="lg">
-          <Select
-            placeholder="選擇票種"
-            size="lg"
-            onChange={(e) => setCurrentOption(e.target.value)}
-          >
-            <option value="option1">Ａ區</option>
-            <option value="option2">Ｂ區</option>
-            <option value="option3">Ｃ區</option>
-          </Select>
-        </ButtonGroup>
-        <ButtonGroup mb={4}>
-          <Button
-            onClick={mounted ? buyTicket : undefined}
-            isLoading={buyTxnPending}
-            loadingText="Pending"
-            size="lg"
-            colorScheme="teal"
-            style={{ backgroundColor: "teal !important" }}
-          >
-            購買票券
-          </Button>
-        </ButtonGroup>
+        {mounted && saleIsActive && !balanceOfData && (
+          <>
+            <ButtonGroup mb={4} size="lg">
+              <Select
+                placeholder="選擇票種"
+                size="lg"
+                onChange={(e) => setCurrentOption(e.target.value)}
+              >
+                <option value="option1">Ａ區</option>
+                <option value="option2">Ｂ區</option>
+                <option value="option3">Ｃ區</option>
+              </Select>
+            </ButtonGroup>
+            <ButtonGroup mb={4}>
+              <Button
+                onClick={mounted ? buyTicket : undefined}
+                isLoading={buyTxnPending}
+                loadingText="Pending"
+                size="lg"
+                colorScheme="teal"
+                style={{ backgroundColor: "teal !important" }}
+              >
+                購買票券
+              </Button>
+            </ButtonGroup>
+          </>
+        )}
+
         {mounted && availableTickets && !availableTickets[0].error ? (
           <Text>
             總共 {Number(availableTickets[0].result)} 張票

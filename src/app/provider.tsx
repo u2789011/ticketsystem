@@ -7,10 +7,13 @@ import { ChakraProvider } from "@chakra-ui/react";
 // Rainbow Kit and Wagmi Imports
 import "@rainbow-me/rainbowkit/styles.css";
 import {
-  getDefaultWallets,
+  connectorsForWallets,
   lightTheme,
   RainbowKitProvider,
 } from "@rainbow-me/rainbowkit";
+import {
+  metaMaskWallet,
+} from '@rainbow-me/rainbowkit/wallets';
 import { configureChains, createConfig, WagmiConfig } from "wagmi";
 import { polygon, polygonMumbai } from "wagmi/chains";
 import { alchemyProvider } from "wagmi/providers/alchemy";
@@ -25,11 +28,22 @@ const { chains, publicClient } = configureChains(
   ]
 );
 
-const { connectors } = getDefaultWallets({
-  appName: "NFT Ticketing System",
-  projectId: process.env.NEXT_PUBLIC_PROJECT_ID || "",
-  chains,
-});
+// const { connectors } = getDefaultWallets({
+//   appName: "NFT Ticketing System",
+//   projectId: process.env.NEXT_PUBLIC_PROJECT_ID || "",
+//   chains,
+// });
+
+const connectors = connectorsForWallets([
+  {
+    groupName: '選擇使用錢包',
+    wallets: [
+      metaMaskWallet({ projectId: process.env.NEXT_PUBLIC_PROJECT_ID || "", chains }),
+      // rainbowWallet({ projectId: process.env.NEXT_PUBLIC_PROJECT_ID || "", chains }),
+      // walletConnectWallet({ projectId: process.env.NEXT_PUBLIC_PROJECT_ID || "", chains }),
+    ],
+  },
+]);
 
 const wagmiConfig = createConfig({
   autoConnect: true,
@@ -50,6 +64,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
               fontStack: "system",
               overlayBlur: "small",
             })}
+            modalSize="compact"
             chains={chains}
             initialChain={polygonMumbai}
           >

@@ -8,14 +8,11 @@ import { ChakraProvider } from "@chakra-ui/react";
 import "@rainbow-me/rainbowkit/styles.css";
 import {
   connectorsForWallets,
-  getDefaultWallets,
   lightTheme,
   RainbowKitProvider,
 } from "@rainbow-me/rainbowkit";
 import {
   metaMaskWallet,
-  rainbowWallet,
-  walletConnectWallet,
 } from '@rainbow-me/rainbowkit/wallets';
 import { configureChains, createConfig, WagmiConfig } from "wagmi";
 import { polygon, polygonMumbai } from "wagmi/chains";
@@ -67,6 +64,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
               fontStack: "system",
               overlayBlur: "small",
             })}
+            modalSize="compact"
             chains={chains}
             initialChain={polygonMumbai}
           >

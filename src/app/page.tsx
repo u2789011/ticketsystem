@@ -20,6 +20,7 @@ import {
   useAccount,
 } from "wagmi";
 import { useIsMounted } from "./hooks/useIsMounted";
+import { useBalance } from "wagmi";
 
 const Buy = () => {
   const {
@@ -45,6 +46,13 @@ const Buy = () => {
     watch: true,
   });
 
+  // Check user balance
+  const { data: userBalance } = useBalance({
+    address: currentAddress,
+  });
+
+  console.log(userBalance);
+
   // Check if sale is open
   const { data: saleIsActive } = useContractRead({
     address: process.env.NEXT_PUBLIC_CONTRACT_ID as `0x${string}`,
@@ -52,6 +60,21 @@ const Buy = () => {
     functionName: "saleIsActive",
     enabled: currentAddress ? true : false,
   });
+
+  // Check if button should be disabled
+  const disableButton =
+    !saleIsActive ||
+    balanceOfData ||
+    currentOption?.charAt(0) !== "o" ||
+    (userBalance &&
+      ((currentOption === "option1" &&
+        userBalance?.value < BigInt(`${0.001 * 10 ** 18}`)) ||
+        (currentOption === "option2" &&
+          userBalance?.value < BigInt(`${0.002 * 10 ** 18}`)) ||
+        (currentOption === "option3" &&
+          userBalance?.value < BigInt(`${0.003 * 10 ** 18}`))));
+
+  console.log("DISABLE", disableButton);
 
   // Wagmi contract reads for available tickets
   const { data: availableTickets, isLoading: isLoadingAvailableTickets } =
@@ -87,7 +110,13 @@ const Buy = () => {
     abi: nfTixBooth,
     functionName: "mintA",
     value: BigInt(`${0.001 * 10 ** 18}`),
-    enabled: !balanceOfData ? true : false,
+    enabled:
+      !balanceOfData &&
+      saleIsActive &&
+      userBalance &&
+      userBalance?.value >= BigInt(`${0.001 * 10 ** 18}`)
+        ? true
+        : false,
   });
 
   const { config: configBuyB } = usePrepareContractWrite({
@@ -95,7 +124,13 @@ const Buy = () => {
     abi: nfTixBooth,
     functionName: "mintB",
     value: BigInt(`${0.002 * 10 ** 18}`),
-    enabled: !balanceOfData ? true : false,
+    enabled:
+      !balanceOfData &&
+      saleIsActive &&
+      userBalance &&
+      userBalance?.value >= BigInt(`${0.002 * 10 ** 18}`)
+        ? true
+        : false,
   });
 
   const { config: configBuyC } = usePrepareContractWrite({
@@ -103,7 +138,13 @@ const Buy = () => {
     abi: nfTixBooth,
     functionName: "mintC",
     value: BigInt(`${0.003 * 10 ** 18}`),
-    enabled: !balanceOfData ? true : false,
+    enabled:
+      !balanceOfData &&
+      saleIsActive &&
+      userBalance &&
+      userBalance?.value >= BigInt(`${0.003 * 10 ** 18}`)
+        ? true
+        : false,
   });
 
   const {
@@ -147,16 +188,16 @@ const Buy = () => {
 
       setBuyTxnPending(false);
 
-      showSuccessToastWithReactNode(
-        "成功",
-        <a
-          href={mounted ? `https://mumbai.polygonscan.com/tx/${buyTxn}` : ""}
-          target="_blank"
-          rel="nofollow noreferrer"
-        >
-          在區塊鏈瀏覽器確認交易！
-        </a>
-      );
+      // showSuccessToastWithReactNode(
+      //   "成功",
+      //   <a
+      //     href={mounted ? `https://mumbai.polygonscan.com/tx/${buyTxn}` : ""}
+      //     target="_blank"
+      //     rel="nofollow noreferrer"
+      //   >
+      //     在區塊鏈瀏覽器確認交易！
+      //   </a>
+      // );
     } catch (err: any) {
       console.log("buyTxn", err);
       console.log("buyTxn", err.code);
@@ -186,33 +227,30 @@ const Buy = () => {
         margin="0 auto"
         maxW="140px"
       >
-        {mounted && saleIsActive && !balanceOfData && (
-          <>
-            <ButtonGroup mb={4} size="lg">
-              <Select
-                placeholder="選擇票種"
-                size="lg"
-                onChange={(e) => setCurrentOption(e.target.value)}
-              >
-                <option value="option1">Ａ區</option>
-                <option value="option2">Ｂ區</option>
-                <option value="option3">Ｃ區</option>
-              </Select>
-            </ButtonGroup>
-            <ButtonGroup mb={4}>
-              <Button
-                onClick={mounted ? buyTicket : undefined}
-                isLoading={buyTxnPending}
-                loadingText="Pending"
-                size="lg"
-                colorScheme="teal"
-                style={{ backgroundColor: "teal !important" }}
-              >
-                購買票券
-              </Button>
-            </ButtonGroup>
-          </>
-        )}
+        <ButtonGroup mb={4} size="lg">
+          <Select
+            placeholder="選擇票種"
+            size="lg"
+            onChange={(e) => setCurrentOption(e.target.value)}
+          >
+            <option value="option1">Ａ區</option>
+            <option value="option2">Ｂ區</option>
+            <option value="option3">Ｃ區</option>
+          </Select>
+        </ButtonGroup>
+        <ButtonGroup mb={4}>
+          <Button
+            onClick={mounted ? buyTicket : undefined}
+            isLoading={buyTxnPending}
+            loadingText="Pending"
+            size="lg"
+            colorScheme="teal"
+            style={{ backgroundColor: "teal !important" }}
+            isDisabled={disableButton ? true : false}
+          >
+            購買票券
+          </Button>
+        </ButtonGroup>
 
         {mounted && availableTickets && !availableTickets[0].error ? (
           <Text>
@@ -256,6 +294,17 @@ const Buy = () => {
             />
           </>
         )}
+        {userBalance &&
+          ((currentOption === "option1" &&
+            userBalance?.value < BigInt(`${0.001 * 10 ** 18}`)) ||
+            (currentOption === "option2" &&
+              userBalance?.value < BigInt(`${0.002 * 10 ** 18}`)) ||
+            (currentOption === "option3" &&
+              userBalance?.value < BigInt(`${0.003 * 10 ** 18}`))) && (
+            <Text fontWeight="bold" mt="3">
+              MATIC不夠
+            </Text>
+          )}
       </Flex>
     </>
   );

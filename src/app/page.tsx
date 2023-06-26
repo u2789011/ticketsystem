@@ -278,20 +278,46 @@ const Buy = () => {
             尚未開放本場活動購票
           </Text>
         )}
-        {mounted && saleIsActive && currentAddress && balanceOfData && (
+        {mounted && saleIsActive && currentAddress && balanceOfData ? (
           <Text mt="10" textAlign="center" width="200px" fontWeight="bold">
             已經購買購票卷
           </Text>
+        ) : (
+          mounted &&
+          (buyASuccess || buyBSuccess || buyCSuccess) && (
+            <>
+              <Text mt="5" textAlign="center" fontWeight="bold">
+                可以到MetaMask按加速加快交易
+              </Text>
+              <CircularProgress
+                capIsRound
+                isIndeterminate
+                color="green.300"
+                size="80px"
+              />
+            </>
+          )
         )}
         {mounted && (buyALoading || buyBLoading || buyCLoading) && (
           <>
-            <Text mt="5">可以到MetaMask按加速加快交易進行</Text>
+            <Text mt="5" textAlign="center" fontWeight="bold">
+              請到MetaMask確認交易進行
+            </Text>
             <CircularProgress
               capIsRound
               isIndeterminate
               color="green.300"
               size="80px"
             />
+          </>
+        )}
+        {mounted && (buyAError || buyBError || buyCError) && (
+          <>
+            <Text mt="5" textAlign="center" fontWeight="bold">
+              MetaMask拒絕
+              <br />
+              交易未完成
+            </Text>
           </>
         )}
         {userBalance &&

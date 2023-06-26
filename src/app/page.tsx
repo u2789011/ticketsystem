@@ -91,10 +91,11 @@ const Buy = () => {
 
   // Check if tickets available
   const isTicketAvailable =
-    availableTickets &&
-    ((currentOption === "option1" && availableTickets[1]?.result) ||
-      (currentOption === "option2" && availableTickets[2]?.result) ||
-      (currentOption === "option3" && availableTickets[3]?.result));
+    currentOption?.charAt(0) !== "o" ||
+    (availableTickets &&
+      ((currentOption === "option1" && availableTickets[1]?.result) ||
+        (currentOption === "option2" && availableTickets[2]?.result) ||
+        (currentOption === "option3" && availableTickets[3]?.result)));
 
   // Check if enough balance
   const isBalanceAvailable =
@@ -218,17 +219,6 @@ const Buy = () => {
       }
 
       setBuyTxnPending(false);
-
-      // showSuccessToastWithReactNode(
-      //   "成功",
-      //   <a
-      //     href={mounted ? `https://mumbai.polygonscan.com/tx/${buyTxn}` : ""}
-      //     target="_blank"
-      //     rel="nofollow noreferrer"
-      //   >
-      //     在區塊鏈瀏覽器確認交易！
-      //   </a>
-      // );
     } catch (err: any) {
       console.log("buyTxn", err);
       console.log("buyTxn", err.code);
@@ -351,17 +341,16 @@ const Buy = () => {
             </Text>
           </>
         )}
-        {userBalance &&
-          ((currentOption === "option1" &&
-            userBalance?.value < BigInt(`${0.001 * 10 ** 18}`)) ||
-            (currentOption === "option2" &&
-              userBalance?.value < BigInt(`${0.002 * 10 ** 18}`)) ||
-            (currentOption === "option3" &&
-              userBalance?.value < BigInt(`${0.003 * 10 ** 18}`))) && (
-            <Text fontWeight="bold" mt="3">
-              MATIC不夠
-            </Text>
-          )}
+        {!isBalanceAvailable && (
+          <Text fontWeight="bold" mt="3">
+            MATIC不夠
+          </Text>
+        )}
+        {!isTicketAvailable && (
+          <Text fontWeight="bold" mt="3">
+            這個票卷賣完了
+          </Text>
+        )}
       </Flex>
     </>
   );

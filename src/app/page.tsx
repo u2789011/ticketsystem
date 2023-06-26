@@ -99,30 +99,16 @@ const Buy = () => {
 
   // Check if enough balance
   const isBalanceAvailable =
-    userBalance &&
-    ((currentOption === "option1" &&
-      userBalance?.value > BigInt(`${0.001 * 10 ** 18}`)) ||
-      (currentOption === "option2" &&
-        userBalance?.value > BigInt(`${0.002 * 10 ** 18}`)) ||
-      (currentOption === "option3" &&
-        userBalance?.value > BigInt(`${0.003 * 10 ** 18}`)));
+    currentOption?.charAt(0) !== "o" ||
+    (userBalance &&
+      ((currentOption === "option1" &&
+        userBalance?.value > BigInt(`${0.001 * 10 ** 18}`)) ||
+        (currentOption === "option2" &&
+          userBalance?.value > BigInt(`${0.002 * 10 ** 18}`)) ||
+        (currentOption === "option3" &&
+          userBalance?.value > BigInt(`${0.003 * 10 ** 18}`))));
 
   // Check if button should be disabled
-  // const disableButton =
-  //   !saleIsActive ||
-  //   balanceOfData ||
-  //   currentOption?.charAt(0) !== "o" ||
-  //   (userBalance &&
-  //     availableTickets &&
-  //     ((currentOption === "option1" &&
-  //       (userBalance?.value < BigInt(`${0.001 * 10 ** 18}`) ||
-  //         !availableTickets[1]?.result)) ||
-  //       (currentOption === "option2" &&
-  //         (userBalance?.value < BigInt(`${0.002 * 10 ** 18}`) ||
-  //           !availableTickets[2]?.result)) ||
-  //       (currentOption === "option3" &&
-  //         (userBalance?.value < BigInt(`${0.003 * 10 ** 18}`) ||
-  //           !availableTickets[3]?.result))));
   const disableButton =
     !saleIsActive ||
     balanceOfData ||

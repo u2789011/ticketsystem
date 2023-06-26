@@ -61,21 +61,6 @@ const Buy = () => {
     enabled: currentAddress ? true : false,
   });
 
-  // Check if button should be disabled
-  const disableButton =
-    !saleIsActive ||
-    balanceOfData ||
-    currentOption?.charAt(0) !== "o" ||
-    (userBalance &&
-      ((currentOption === "option1" &&
-        userBalance?.value < BigInt(`${0.001 * 10 ** 18}`)) ||
-        (currentOption === "option2" &&
-          userBalance?.value < BigInt(`${0.002 * 10 ** 18}`)) ||
-        (currentOption === "option3" &&
-          userBalance?.value < BigInt(`${0.003 * 10 ** 18}`))));
-
-  console.log("DISABLE", disableButton);
-
   // Wagmi contract reads for available tickets
   const { data: availableTickets, isLoading: isLoadingAvailableTickets } =
     useContractReads({
@@ -104,6 +89,23 @@ const Buy = () => {
       watch: true,
     });
 
+  // Check if button should be disabled
+  const disableButton =
+    !saleIsActive ||
+    balanceOfData ||
+    currentOption?.charAt(0) !== "o" ||
+    (userBalance &&
+      availableTickets &&
+      ((currentOption === "option1" &&
+        (userBalance?.value < BigInt(`${0.001 * 10 ** 18}`) ||
+          !availableTickets[1]?.result)) ||
+        (currentOption === "option2" &&
+          (userBalance?.value < BigInt(`${0.002 * 10 ** 18}`) ||
+            !availableTickets[2]?.result)) ||
+        (currentOption === "option3" &&
+          (userBalance?.value < BigInt(`${0.003 * 10 ** 18}`) ||
+            !availableTickets[3]?.result))));
+
   // Configure Buy Ticket Writes
   const { config: configBuyA } = usePrepareContractWrite({
     address: process.env.NEXT_PUBLIC_CONTRACT_ID as `0x${string}`,
@@ -112,6 +114,8 @@ const Buy = () => {
     value: BigInt(`${0.001 * 10 ** 18}`),
     enabled:
       !balanceOfData &&
+      availableTickets &&
+      availableTickets[1]?.result &&
       saleIsActive &&
       userBalance &&
       userBalance?.value >= BigInt(`${0.001 * 10 ** 18}`)
@@ -126,6 +130,8 @@ const Buy = () => {
     value: BigInt(`${0.002 * 10 ** 18}`),
     enabled:
       !balanceOfData &&
+      availableTickets &&
+      availableTickets[2]?.result &&
       saleIsActive &&
       userBalance &&
       userBalance?.value >= BigInt(`${0.002 * 10 ** 18}`)
@@ -140,6 +146,8 @@ const Buy = () => {
     value: BigInt(`${0.003 * 10 ** 18}`),
     enabled:
       !balanceOfData &&
+      availableTickets &&
+      availableTickets[3]?.result &&
       saleIsActive &&
       userBalance &&
       userBalance?.value >= BigInt(`${0.003 * 10 ** 18}`)

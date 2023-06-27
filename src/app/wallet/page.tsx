@@ -97,6 +97,26 @@ function Wallet() {
             color="green.300"
             size="120px"
           />
+          // <Box width="100%" margin="16px 8px">
+          //   <Text fontSize="xl" textAlign="left" mb={2} color="white">
+          //     票券名稱:
+          //   </Text>
+          //   <Box
+          //     padding="12px"
+          //     border="1px solid black"
+          //     borderRadius="12px"
+          //     filter="auto"
+          //     blur="10px"
+          //   >
+          //     <Image
+          //       src={
+          //         "https://gateway.pinata.cloud/ipfs/QmWjge5gZEz2YeuU1t1DtbpDerTwVjWmvmz3hgnoF4kEBA/0.png"
+          //       }
+          //       alt={""}
+          //       // opacity="25%"
+          //     />
+          //   </Box>
+          // </Box>
         )}
         {!loadingTicket &&
           validTickets.length > 0 &&

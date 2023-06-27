@@ -10,6 +10,7 @@ import {
   useAccount,
 } from "wagmi";
 import { useIsMounted } from "../hooks/useIsMounted";
+import CheckInWhitelist from "../../../components/CheckInWhitelist";
 
 const index = () => {
   const { showSuccessToastWithReactNode, showErrorToast } = useCustomToast();
@@ -194,6 +195,7 @@ const index = () => {
           關閉販售
         </Button>
       </Flex>
+      <CheckInWhitelist />
     </>
   );
 };

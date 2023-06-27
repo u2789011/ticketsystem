@@ -14,10 +14,13 @@ const CheckInWhitelist = () => {
   const mounted = useIsMounted();
   const { showSuccessToastWithReactNode, showErrorToast } = useCustomToast();
   const [inputAddress, setInputAddress] = useState<string>("");
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) =>
-    setInputAddress(event.target.value as `0x${string}`);
   const debouncedInputAddress = useDebounce(inputAddress, 500);
 
+  // Get Input Address Value
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) =>
+    setInputAddress(event.target.value as `0x${string}`);
+
+  // Check if address is in whitelist
   const { data: isCheckInWhiteList } = useContractRead({
     address: `${process.env.NEXT_PUBLIC_CONTRACT_ID}` as `0x${string}`,
     abi: nfTixBooth,
@@ -26,6 +29,7 @@ const CheckInWhitelist = () => {
     enabled: Boolean(debouncedInputAddress),
   });
 
+  // Add address to whitelist
   const { config: addtoCheckInWhitelistConfig } = usePrepareContractWrite({
     address: `${process.env.NEXT_PUBLIC_CONTRACT_ID}` as `0x${string}`,
     abi: nfTixBooth,
@@ -34,6 +38,7 @@ const CheckInWhitelist = () => {
     functionName: "addToCheckInWhitelist",
   });
 
+  // Remove address from whitelist
   const { config: removeFromCheckInWhitelistConfig } = usePrepareContractWrite({
     address: `${process.env.NEXT_PUBLIC_CONTRACT_ID}` as `0x${string}`,
     abi: nfTixBooth,

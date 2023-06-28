@@ -149,12 +149,23 @@ function Wallet() {
             width="100%"
             margin="16px 8px"
           >
-            <Text fontSize="xl" textAlign="center" mb={2}>
-              票券名稱：{NFT?.data?.name}
-            </Text>
-            <Box padding="12px" border="1px solid black" borderRadius="12px">
-              <Image src={NFT?.data?.image} alt={NFT?.data?.name} />
-            </Box>
+            <Flex
+              justifyContent="center"
+              flexDirection="column"
+              alignItems="center"
+            >
+              <Text fontSize="xl" textAlign="center" mb={2}>
+                票券名稱：{NFT?.data?.name}
+              </Text>
+              <Box
+                padding="12px"
+                border="1px solid black"
+                borderRadius="12px"
+                maxWidth="300px"
+              >
+                <Image src={NFT?.data?.image} alt={NFT?.data?.name} />
+              </Box>
+            </Flex>
           </Link>
         </Flex>
       </>

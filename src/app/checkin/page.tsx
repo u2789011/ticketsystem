@@ -69,7 +69,7 @@ function CheckIn() {
     onSuccess(data, variables, context) {
       console.log("onSuccess", data, variables, context);
       showSuccessToastWithReactNode(
-        "Sale is Opened!",
+        "入場成功!",
         <a
           href={`https://mumbai.polygonscan.com/tx/${data.hash}`}
           target="_blank"

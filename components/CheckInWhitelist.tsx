@@ -34,7 +34,7 @@ const CheckInWhitelist = () => {
     address: `${process.env.NEXT_PUBLIC_CONTRACT_ID}` as `0x${string}`,
     abi: nfTixBooth,
     args: [debouncedInputAddress],
-    enabled: Boolean(isCheckInWhiteList),
+    enabled: Boolean(!isCheckInWhiteList),
     functionName: "addToCheckInWhitelist",
   });
 

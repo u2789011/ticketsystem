@@ -4,10 +4,8 @@ import { Button, Flex, Heading, Text } from "@chakra-ui/react";
 import useCustomToast from "../../../components/hooks/useCustomToast";
 import { nfTixBooth } from "../../../contracts/abis/nfTixBooth";
 import {
-  useContractRead,
   useContractWrite,
   usePrepareContractWrite,
-  useAccount,
 } from "wagmi";
 import { useIsMounted } from "../hooks/useIsMounted";
 import CheckInWhitelist from "../../../components/CheckInWhitelist";
@@ -21,8 +19,6 @@ const index = () => {
   const saleIsActive = useSaleIsActive();
   const isOwner = useContractOwner();
   const mounted = useIsMounted();
-
-  const { address } = useAccount();
 
   // const { data: owner } = useContractRead({
   //   address: `${process.env.NEXT_PUBLIC_CONTRACT_ID}` as `0x${string}`,

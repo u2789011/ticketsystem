@@ -47,6 +47,15 @@ export default function Home({ children }: Props) {
     enabled: address ? true : false,
   });
 
+  // Check if address is in whitelist
+  const { data: isCheckInWhiteList } = useContractRead({
+    address: `${process.env.NEXT_PUBLIC_CONTRACT_ID}` as `0x${string}`,
+    abi: nfTixBooth,
+    functionName: "checkInWhitelist",
+    args: [address],
+    enabled: address ? true : false,
+  });
+
   let isOwner = address === owner && address;
   console.log("isowner", isOwner);
 
@@ -120,8 +129,8 @@ export default function Home({ children }: Props) {
                   )}
                 </MenuItem>
                 <MenuDivider />
-                <MenuItem isDisabled={mounted && !isOwner}>
-                  {mounted && !isOwner ? (
+                <MenuItem isDisabled={mounted && !isCheckInWhiteList}>
+                  {mounted && !isCheckInWhiteList ? (
                     <Flex
                       alignItems="center"
                       flexDirection="row"
@@ -146,8 +155,8 @@ export default function Home({ children }: Props) {
                   )}
                 </MenuItem>
                 <MenuDivider />
-                <MenuItem isDisabled={mounted && !isOwner}>
-                  {mounted && !isOwner ? (
+                <MenuItem isDisabled={mounted && !isCheckInWhiteList}>
+                  {mounted && !isCheckInWhiteList ? (
                     <Flex
                       alignItems="center"
                       flexDirection="row"

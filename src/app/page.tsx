@@ -300,7 +300,7 @@ const Buy = () => {
                 capIsRound
                 isIndeterminate
                 color="green.300"
-                size="80px"
+                size="40px"
               />
             </>
           )
@@ -314,7 +314,7 @@ const Buy = () => {
               capIsRound
               isIndeterminate
               color="green.300"
-              size="80px"
+              size="40px"
             />
           </>
         )}
